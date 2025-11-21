@@ -1,0 +1,182 @@
+@media only screen and (min-width: 768px) {
+    /* App.css */
+.appContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: whitesmoke;
+  }
+  
+  .canvasContainer {
+    width: 70%;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    width: 25%;
+    align-items: center;
+  }
+  
+  .categorySelector {
+    width: 80%;
+    height: 3.5rem;
+    font-size: 2rem;
+  }
+  
+  .assetsDisplay {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    height: 90%;
+    width: 90%;
+    background: #ccc;
+    border-radius: 8px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  
+  .assetItem {
+    background-size: cover;
+    width: auto;
+    height: 150px;
+    cursor: pointer;
+  }
+
+  .assetItem:hover{
+    scale: 1.1;
+  }
+  
+  .diagonalBar {
+    width: 5%;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .diagonalBarContent {
+    margin-top: -22%;
+    height: 95%;
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+  }
+  
+  .diagonalBarTitle {
+    transform: rotate(90deg);
+    width: 100%;
+    white-space: nowrap;
+    padding-top: 60%;
+    padding-left: 70%;
+    z-index: 9999;
+    font-family: "Grechen Fuemen", serif;
+    color: darkslategray;
+  }
+
+  .selectContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btnContainer{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 2%;
+  }
+
+  .btn{
+    width: 20%;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+    /* App.css */
+.appContainer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: whitesmoke;
+  }
+  
+  .canvasContainer {
+    width: 100vw;
+    height: 75vh;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 20vh;
+    width: 100vw;
+    align-items: center;
+
+    padding: 0;
+  }
+  
+  .categorySelector {
+    width: 100vw;
+    height: 2rem;
+    font-size: 0.8rem;
+  }
+  
+  .btnContainer{
+    margin-top: 2%;
+    width: 100vw;
+    display: flex;
+    gap: 2%;
+    justify-content: center;
+  }
+
+  .assetsDisplay {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100vw;
+    overflow: scroll;
+  }
+  
+  .assetItem {
+    flex-shrink: 0;
+    background-size: cover;
+    width: 100px;
+    height: 75px;
+    cursor: pointer;
+
+  }
+  
+  .diagonalBar {
+    width: 100vw;
+    height: 10vh;
+    margin-bottom: 0;
+  }
+  
+  .diagonalBarContent {
+    top: 0;
+    height: 100%;
+  }
+  
+  .diagonalBarTitle {
+    width: 100%;
+    white-space: nowrap;
+    font-size: 2rem;
+    font-family: "Grechen Fuemen", serif;
+  }
+}
+  
