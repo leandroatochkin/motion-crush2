@@ -22,11 +22,11 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'}>) => {
+        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'}>) => {
             state.id = action.payload.id;
             state.name = action.payload.name;
             state.email = action.payload.email;
-            state.isLoggedIn = true;
+            state.isLoggedIn = false;
             state.role = action.payload.role;
         },
         logout: (state) => {
@@ -39,6 +39,6 @@ export const userSlice = createSlice({
     }
 });
 
-export const { login, logout } = userSlice.actions;
+export const { storeLogin, logout } = userSlice.actions;
 
 export default userSlice.reducer;

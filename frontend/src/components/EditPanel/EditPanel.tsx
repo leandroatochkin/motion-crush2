@@ -21,16 +21,23 @@ import {
   Tooltip,
   Typography
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from '../../store/store'
+import { logout } from '../../store/slices/User';
+import { useNavigate } from 'react-router-dom';
 
 
 const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handleActivateGrid  }) => {
 
 
     const theme = useSelector((state: RootState) => state.theme);
-  
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
+    const handleLogout = () => {
+      dispatch(logout())
+      navigate('/')
+    }
 
     const handleRotateLeft = () => { 
       setSelectedAssets(prevAssets =>
@@ -208,7 +215,14 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
           </Button>
           </Tooltip>
         ))}
-        <Typography
+        <Box>
+          <Button
+          color='error'
+          onClick={handleLogout}
+          >
+            Salir
+          </Button>
+          <Typography
          sx={{
           color: theme.colors.text,
           fontSize: theme.fontSizes.small,
@@ -219,6 +233,7 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
         >
           versión 2.00
         </Typography>
+        </Box>
     </Box>
   );
 };

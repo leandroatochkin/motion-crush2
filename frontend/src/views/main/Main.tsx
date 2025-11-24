@@ -66,6 +66,9 @@ const Main = () => {
 
   const loggedIn = true;
   const theme = useSelector((state: RootState) => state.theme);
+  const user = useSelector((state: RootState) => state.user);
+
+  console.log(user)
 
   // ---------------------------------------------
   // HANDLERS
@@ -238,7 +241,7 @@ const fullCategories = {
                 onClick={() => setOpenEditor(true)}
                 className={style.btn}
               >
-                ➕ Texto
+                ➕ Imagen
               </Button>
             </div>
           </div>

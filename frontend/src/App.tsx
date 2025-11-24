@@ -3,16 +3,19 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFoundPage from "./views/NotFound";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Login from "./views/login/Login";
+import ProtectedRoute from "./auth/ProtectedRoute";
 
 const App = () => {
 
   const router = createBrowserRouter([
     {
-    path: '/home',
+    path: '/draw',
     element: (
-      <Dashboard>
+      <ProtectedRoute>
+        <Dashboard>
          <Main />
-      </Dashboard>
+        </Dashboard>
+      </ProtectedRoute>
     ),
     errorElement: <NotFoundPage />
   },

@@ -8,7 +8,8 @@ import {
   Stack,
   CircularProgress,
   Box,
-  Divider
+  Divider,
+  Typography
 } from "@mui/material";
 import Trash from "../../assets/icons/Trash";
 import { removeBackground } from "@imgly/background-removal";
@@ -114,7 +115,12 @@ const ImageEditorModal: React.FC<Props> = ({ open, onClose, onSave }) => {
           >
             Subir imagen PNG
           </Button>
-
+          {
+            !imgSrc && 
+            <Typography>
+            Las imagenes subidas se encontrarán en la categoría "Imagenes de usuario"
+            </Typography>
+          }
    
           {imgSrc && (
             <Box sx={{ position: "relative", width: "100%" }}>
