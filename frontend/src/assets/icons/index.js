@@ -16,3 +16,4 @@ export {default as Help} from './Help';
 export {default as Isometric} from './Isometric';
 export {default as TopView} from './TopView';
 export {default as GridIcon} from './Grid';
+export {default as OffIcon} from './OffIcon';

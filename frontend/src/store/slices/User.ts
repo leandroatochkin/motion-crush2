@@ -14,7 +14,7 @@ const initialState: UserState = {
     id: '',
     name: '',
     email: '',
-    isLoggedIn: true,
+    isLoggedIn: false,
     role: 'user',
 }
 
@@ -22,11 +22,11 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'}>) => {
+        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'; isLoggedIn: boolean}>) => {
             state.id = action.payload.id;
             state.name = action.payload.name;
             state.email = action.payload.email;
-            state.isLoggedIn = false;
+            state.isLoggedIn = action.payload.isLoggedIn;
             state.role = action.payload.role;
         },
         logout: (state) => {

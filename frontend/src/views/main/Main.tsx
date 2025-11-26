@@ -15,9 +15,7 @@ import {
   arrows_aerial,
   people_aerial
 } from '../../utils/data';
-
-import style from './Main.module.css';
-
+import Searchbar from "../../components/inputs/Searchbar";
 import { TopView, Isometric, Help } from "../../assets/icons";
 import HelpModal from "../../components/HelpModal/HelpModal";
 import EditPanel from "../../components/EditPanel/EditPanel";
@@ -25,6 +23,8 @@ import { Box, Button, FormControl, MenuItem, Select } from "@mui/material";
 import { useSelector } from "react-redux";
 import type { RootState } from '../../store/store'
 import ImageEditorModal from "../../components/ImgEditor/ImgEditor";
+import { useMobile } from "../../utils/hooks/hooks";
+
 
 
 // Categories
@@ -53,6 +53,8 @@ const Main = () => {
   const [textAssets, setTextAssets] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("animals");
   const [currentView, setCurrentView] = useState<Record<string, { name: string; data: any }>>(categories_aerial);
+  const [selectedSearchAsset, setSelectedSearchAsset] = useState<string | null>(null);
+  const [search, setSearch] = useState<string>('')
 
   const [currentElement, setCurrentElement] = useState({
     index: null,
@@ -64,11 +66,96 @@ const Main = () => {
   const [openEditor, setOpenEditor] = useState<boolean>(false)
   const [visibleGrid, setVisibleGrid] = useState(false);
 
-  const loggedIn = true;
+   
+
   const theme = useSelector((state: RootState) => state.theme);
   const user = useSelector((state: RootState) => state.user);
 
   console.log(user)
+
+  const isMobile = useMobile()
+
+  const styles = {
+    appContainer:
+          {
+            display: 'flex',
+            flexDirection: !isMobile ? 'row' : 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100vw',
+            height: '100dvh',
+            overflow: 'hidden',
+            backgroundColor: 'whitesmoke',
+          },
+    canvas:
+          {
+            width: !isMobile ? '70%' : '99%',
+            height: !isMobile ? '100vh' : '70vh'
+          },
+    sidebar: 
+          {
+              display: 'flex',
+              flexDirection: 'column',
+              height: !isMobile ? '100vh' : '40vh',
+              overflowY: 'scroll',
+              scrollbarWidth: 'none',
+              width: !isMobile ? '25%' : '100vw',
+              alignItems: 'center'
+          },
+    sidebarTop:
+          {
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+          },
+    select:
+          {
+                m: 1,
+                borderRadius: 4,
+                background: theme.colors.backgroundSecondary
+          },
+    button:
+          {
+            width: '20%'
+          },
+    assetSelection: {
+          display: !isMobile ? 'grid' : 'flex',
+          flexDirection: 'row',
+          overflowX: isMobile ? 'auto' : 'hidden',
+          overflowY: isMobile ? 'hidden' : 'auto',
+
+          // Desktop grid only
+          gridTemplateColumns: !isMobile ? 'repeat(2, 1fr)' : 'none',
+          gridGap: !isMobile ? '10px' : '0',
+          gridAutoRows: !isMobile ? 'min-content' : 'none',
+
+          gap: isMobile ? '10px' : undefined, // spacing between flex items
+
+          height: !isMobile ? '90%' : 'auto',
+          width: '90%',
+          paddingBottom: isMobile ? '10px' : '0',
+
+          whiteSpace: isMobile ? 'nowrap' : 'normal',   // keeps items inline
+          scrollbarWidth: 'none',
+          mt: 2
+},
+    selectedSearchAsset:
+           {
+                  backgroundSize: 'cover',
+                  height: !isMobile ? '150px' : '50px',
+                  cursor: 'pointer',
+                  backgroundImage: `url(${selectedSearchAsset})`,
+                  backgroundColor: theme.colors.backgroundSecondary,
+                  borderRadius: 4,
+                  mb: 2,
+                  transition: 'scale 0.2s ease-in',
+                  '&:hover': { scale: 1.05 }
+                }
+  }
+  
+          
 
   // ---------------------------------------------
   // HANDLERS
@@ -82,6 +169,9 @@ const fullCategories = {
   ...currentView,
   ...(customAssets.length > 0 ? userImagesCategory : {})
 };
+
+const allAssets = Object.values(fullCategories)
+  .flatMap(category => category.data)
 
   const handleRemoveAsset = (index: number) => {
     setAssets(prev => prev.filter((_, i) => i !== index));
@@ -138,13 +228,6 @@ const fullCategories = {
   // RENDER
   // ---------------------------------------------
 
-  if (!loggedIn) {
-    return (
-      <div className={style.appContainer}>
-        <h1 style={{ color: "black" }}>Por favor loguearse</h1>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -153,9 +236,13 @@ const fullCategories = {
           handleAddAsset(img);
           setOpenEditor(false);
         }}/>}
-      <div className={style.appContainer}>
+      <Box 
+          sx={styles.appContainer}
+          >
         {/* Canvas */}
-        <div className={style.canvasContainer}>
+        <Box 
+        sx={styles.canvas}
+        >
           <Canvas
             handleClearPanel={handleClearPanel}
             handleClearCanva={handleClearCanva}
@@ -189,7 +276,7 @@ const fullCategories = {
               />
             ))}
           </Canvas>
-        </div>
+        </Box>
 
         {/* Editor panel */}
         <EditPanel
@@ -200,17 +287,17 @@ const fullCategories = {
         />
 
         {/* Sidebar */}
-        <div className={style.sidebar}>
-          <div className={style.selectContainer}>
+        <Box 
+        sx={styles.sidebar}
+        >
+          <Box 
+          sx={styles.sidebarTop}
+          >
             <FormControl fullWidth>
               <Select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
-                sx={{
-                  m: 1,
-                  borderRadius: 4,
-                  background: theme.colors.backgroundSecondary
-                }}
+                sx={styles.select}
               >
                 {Object.entries(fullCategories).map(([key, { name }]) => (
                   <MenuItem key={key} value={key}>
@@ -220,56 +307,70 @@ const fullCategories = {
               </Select>
             </FormControl>
 
-            <div className={style.btnContainer}>
-              <Button onClick={() => setCurrentView(categories_aerial)} className={style.btn}>
+            <Box 
+            sx={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-evenly',
+                  marginTop: '2%'
+            }}>
+              <Button onClick={() => setCurrentView(categories_aerial)} 
+              sx={styles.button}>
                 <TopView />
               </Button>
-              <Button onClick={() => setCurrentView(categories_3d)} className={style.btn}>
+              <Button onClick={() => setCurrentView(categories_3d)} 
+                  sx={styles.button}>
+                
                 <Isometric />
               </Button>
-              <Button onClick={() => setOpenModal(true)} className={style.btn}>
+              <Button onClick={() => setOpenModal(true)}   sx={styles.button}>
                 <Help />
               </Button>
 
               <Button
                 onClick={() => setTextAssets(prev => [...prev, {}])}
-                className={style.btn}
-              >
+                  sx={styles.button}>
                 ➕ Texto
               </Button>
               <Button
                 onClick={() => setOpenEditor(true)}
-                className={style.btn}
-              >
+                  sx={styles.button}>
                 ➕ Imagen
               </Button>
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {/* Assets list */}
+          <Searchbar
+            assets={allAssets}
+            onSearchChange={setSearch}
+            onSelectAsset={(src) => setSelectedSearchAsset(src)}
+            fullWidth={true}
+          />
           <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gridGap: '10px',
-              gridAutoRows: 'min-content',
-              height:' 90%',
-              width: '90%',
-              borderRadius: '8px',
-              mt: '5%',
-              mb: '5%',
-              overflowY: 'auto',
-              scrollbarWidth: 'none',
-            }}
+            sx={styles.assetSelection}
             >
-            {fullCategories[selectedCategory]?.data?.map((src: string, index: number) => (
+            {selectedSearchAsset && (
+              <>
+              <Box
+                onClick={() => addNewAsset(selectedSearchAsset)}
+                sx={styles.selectedSearchAsset}
+              />
+              <Button
+              onClick={()=>setSelectedSearchAsset(null)}
+              >
+                borrar
+              </Button>
+              </>
+            )}  
+            {!selectedSearchAsset && fullCategories[selectedCategory]?.data?.map((src: string, index: number) => (
               <Box
                 key={index}
                 onClick={() => addNewAsset(src)}
                 sx={{
                   backgroundSize: 'cover',
-                  width: 'auto',
-                  height: '150px',
+                  width: !isMobile ? 'auto' : '50px',
+                  height: !isMobile ? '150px' : '50px',
                   cursor: 'pointer',
                   backgroundImage: `url(${src})`,
                   backgroundColor: theme.colors.backgroundSecondary,
@@ -277,13 +378,13 @@ const fullCategories = {
                   transition: 'scale 0.2s ease-in',
                   '&:hover': {
                     scale: 1.05
-                  }
+                  },
                 }}
               ></Box>
             ))}
           </Box>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </>
   );
 };

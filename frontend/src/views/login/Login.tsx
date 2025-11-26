@@ -1,3 +1,4 @@
+import React from 'react';
 import { 
     Paper, 
     Typography, 
@@ -22,9 +23,10 @@ import { UserLoginData } from '../../api/userApi';
 import { supabase } from '../../auth/supabase';
 import { login, signup, googleLogin } from '../../auth/login';
 import { notify } from '../../lib/notifications/notify';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { storeLogin } from '../../store/slices/User';
 import { useNavigate } from 'react-router-dom';
+import type { RootState } from "../../store/store";
 //import ForgotPasswordDialog from '../../components/dialogs/ForgotPassword';
 
 
@@ -54,8 +56,17 @@ const navigate = useNavigate()
 
 //const {mutate, isPending} = useLogIn()
 
+const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
+React.useEffect(() => {
+  if (isLoggedIn) {
+    navigate("/draw");
+  }
+}, [isLoggedIn]);
 
+React.useEffect(() => {
+  console.log("isLoggedIn changed:", isLoggedIn);
+}, [isLoggedIn]);
 
 const onSubmit = async (data: UserLoginData) => {
   setLoading(true);
@@ -63,8 +74,8 @@ const onSubmit = async (data: UserLoginData) => {
 
 
   try {
-    let authData;
-    let authError;
+    let authData: any;
+    let authError: any;
     
 
     if (isLogin) {
@@ -84,18 +95,28 @@ const onSubmit = async (data: UserLoginData) => {
       return; 
     }
 
+    console.log("dispatching", {
+            id: authData.user?.id,
+            email: authData.user?.email,
+            isLoggedIn: true
+            });
+
    
     dispatch(
       storeLogin({
         id: authData.user?.id,
         name: authData.user?.email,
         email: authData.user?.email ?? data.email,
-        role: "user",
+        isLoggedIn: true,
+        role: "user"        
       })
     );
 
-    navigate("/draw");
-  } finally {
+  } 
+  catch(e){
+    console.log(e)
+  }
+  finally {
     setLoading(false);
   }
 };

@@ -9,7 +9,8 @@ import {
   Trash, 
   Hoist, 
   Mirror,
-  GridIcon 
+  GridIcon,
+  OffIcon 
 } from "../../assets/icons";
 import ExpandHeight from "../../assets/icons/ExpandHeight";
 import ExpandWidth from "../../assets/icons/ExpandWidth";
@@ -25,6 +26,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from '../../store/store'
 import { logout } from '../../store/slices/User';
 import { useNavigate } from 'react-router-dom';
+import { useMobile } from '../../utils/hooks/hooks';
 
 
 const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handleActivateGrid  }) => {
@@ -33,6 +35,48 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
     const theme = useSelector((state: RootState) => state.theme);
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const isMobile = useMobile()
+
+    const styles = {
+       editPanelContainer: 
+       { 
+          display: "flex", 
+          flexDirection: !isMobile ? "column" : 'row', 
+          width: !isMobile ? 'auto' : '100vw', 
+          height: !isMobile ? '100dvh' : '8vh', 
+          background: theme.colors.background,
+          gap: '10px',
+          borderLeft: `1px solid ${theme.colors.border}`,
+          borderRight:  `1px solid ${theme.colors.border}`,
+          overflowX: !isMobile ? 'none' : 'scroll',
+          overflowY: 'hidden',
+
+          },
+        assetPreview: 
+        {
+            p: 0.5,
+            m: 1,
+            background: selectedAsset.src ? theme.colors.backgroundSecondary : theme.colors.errorBg,
+            borderRadius: 4,
+            height: !isMobile ? 'auto' : '40px',
+            width: !isMobile ? 'auto' : '40px'
+        },
+        logoutButtonContainer:
+        {
+          display: !isMobile ? 'flex' : 'inline-block',
+          flexDirection: 'column',
+          justifyContent: !isMobile ? 'end' : 'center',
+          p: 1
+        },
+        logoutButton:
+        {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: isMobile ? '100%' : '30px',
+            mt: !isMobile ? 20 : 0
+          }
+    }
 
     const handleLogout = () => {
       dispatch(logout())
@@ -175,30 +219,22 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
 
   return (
     <Box 
-      sx={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          width: 'auto', 
-          height: '100dvh', 
-          background: theme.colors.background,
-          gap: '10px',
-          borderLeft: `1px solid ${theme.colors.border}`,
-          borderRight:  `1px solid ${theme.colors.border}`
-          }}>
-      <Box
-        sx={{
-            p: 0.5,
-            m: 1,
-            background: selectedAsset.src ? theme.colors.backgroundSecondary : theme.colors.errorBg,
-            borderRadius: 4
-        }}
+      sx={styles.editPanelContainer}>
+      {
+        !isMobile &&
+        <Box
+        sx={styles.assetPreview}
       >
         <img 
           src={`${selectedAsset.src}` || '/none.png'} 
-          style={{ height: "100px", width: "100px", aspectRatio: 'auto' }} 
+          style={{ 
+            height: !isMobile ? "100px" : '30px', 
+            width: !isMobile ? "100px" : '30px', 
+            aspectRatio: 'auto' }} 
           alt="Selected Asset" 
           />
       </Box>
+      }
       {buttons.map((btn, i) => (
           <Tooltip
           key={i}
@@ -215,24 +251,20 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
           </Button>
           </Tooltip>
         ))}
-        <Box>
+        <Box
+        sx={styles.logoutButtonContainer}
+        >
           <Button
           color='error'
           onClick={handleLogout}
+          variant='contained'
+          sx={styles.logoutButton}
           >
-            Salir
+           {
+            !isMobile ? 'Salir' :  <OffIcon />
+           }
           </Button>
-          <Typography
-         sx={{
-          color: theme.colors.text,
-          fontSize: theme.fontSizes.small,
-          textAlign: 'center',
-          mt: 10,
-          pointerEvents: 'none'
-         }}
-        >
-          versión 2.00
-        </Typography>
+         
         </Box>
     </Box>
   );

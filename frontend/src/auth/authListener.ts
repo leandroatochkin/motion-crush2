@@ -11,6 +11,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         id: user.id,
         name: user.user_metadata.full_name ?? "",
         email: user.email ?? "",
+        isLoggedIn: true,
         role: "user"
       })
     );
