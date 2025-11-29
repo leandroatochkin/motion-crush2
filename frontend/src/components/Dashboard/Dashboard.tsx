@@ -43,11 +43,13 @@ const bgSec = theme.colors.backgroundSecondary
         left: '0',
         minHeight: '100dvh',
         width: '100vw',
-        backgroundColor: theme.colors.background,
-        backgroundImage: `linear-gradient(0deg, transparent 24%, ${bgSec} 25%, ${bgSec} 26%, transparent 27%,transparent 74%, ${bgSec} 75%, ${bgSec} 76%, transparent 77%,transparent),
-        linear-gradient(90deg, transparent 24%, ${bgSec} 25%, ${bgSec} 26%, transparent 27%,transparent 74%, ${bgSec} 75%, ${bgSec} 76%, transparent 77%,transparent)
-        `,
-        backgroundSize: `55px 55px`
+        // backgroundColor: theme.colors.background,
+        // backgroundImage: `linear-gradient(0deg, transparent 24%, ${bgSec} 25%, ${bgSec} 26%, transparent 27%,transparent 74%, ${bgSec} 75%, ${bgSec} 76%, transparent 77%,transparent),
+        // linear-gradient(90deg, transparent 24%, ${bgSec} 25%, ${bgSec} 26%, transparent 27%,transparent 74%, ${bgSec} 75%, ${bgSec} 76%, transparent 77%,transparent)
+        // `,
+        // backgroundSize: `55px 55px`
+        //background: '#833AB4',
+        background: `linear-gradient(90deg,rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)`
     }}
     >
         {children}

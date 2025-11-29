@@ -16,7 +16,7 @@ router.post('/', checkToken, async (req, res) => {
   try {
     // 1) fetch current count
     const { data: userRow, error } = await supabase
-      .from('app_users')
+      .from('users')
       .select('sketch_count, plan')
       .eq('id', userId)
       .maybeSingle();
@@ -35,8 +35,8 @@ router.post('/', checkToken, async (req, res) => {
     // Use Postgres RPC or SQL update with WHERE clause to ensure atomicity.
 
     // Atomic increment only if below limit:
-    const { data: updateData, error: updateError } = await supabaseServer
-      .from('app_users')
+    const { data: updateData, error: updateError } = await supabase
+      .from('users')
       .update({ sketch_count: (userRow.sketch_count + 1) })
       .eq('id', userId)
       .filter('sketch_count', 'lt', limit) // ensures we only update if still below limit
@@ -49,7 +49,7 @@ router.post('/', checkToken, async (req, res) => {
     }
 
     // optionally insert a sketch record
-    const { data: sketch, error: sketchError } = await supabaseServer
+    const { data: sketch, error: sketchError } = await supabase
       .from('sketches')
       .insert({ user_id: userId, meta: req.body.meta || {} })
       .select()
@@ -57,7 +57,13 @@ router.post('/', checkToken, async (req, res) => {
 
     if (sketchError) throw sketchError;
 
-    return res.json({ ok: true, sketchId: sketch.id });
+    return res.json({
+        ok: true,
+        sketchId: sketch.id,
+        used: updateData[0].sketch_count,
+        limit,
+        remaining: Math.max(0, limit - updateData[0].sketch_count)
+        });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'server error' });

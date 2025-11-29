@@ -57,6 +57,8 @@ const isMobile = useMobile()
 
 const navigate = useNavigate()
 
+const handleResetPassword = () => navigate('/reset-password')
+
 //const {mutate, isPending} = useLogIn()
 
 const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
@@ -365,7 +367,7 @@ const onSubmit = async (data: UserLoginData) => {
           >
             ¿Olvidaste tu contraseña? Hace click <Typography
                 component="span"
-                onClick={() => setOpenForgotPasswordDialog(true)}
+                onClick={handleResetPassword}
                 sx={{
                     fontWeight: 'bolder',
                     cursor: 'pointer',

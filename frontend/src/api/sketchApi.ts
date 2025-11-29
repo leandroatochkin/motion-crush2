@@ -3,7 +3,10 @@ import { getToken } from "../auth/token"
 
 export interface SketchCreationData {
     ok: boolean
-    sketchId: string
+    sketchId: string,
+    used: number
+    limit: number
+    remaining: number
 }
 
 interface UserId {
@@ -29,7 +32,7 @@ export const sketchApiSlice = createApi({
       },
     }),
     endpoints: (builder) => ({
-      createSketch: builder.mutation<UserId, SketchCreationData>({
+      createSketch: builder.mutation<SketchCreationData, UserId>({
         query: (payload) => ({
           url: `/sketches/create-sketch`,
           method: "POST",

@@ -13,7 +13,7 @@ export interface UserState {
     email: string;
     isLoggedIn: boolean;
     role: 'user' | 'admin';
-    usage: Usage | null
+    usage: Usage | null,
 }
 
 
@@ -38,6 +38,13 @@ export const userSlice = createSlice({
             state.role = action.payload.role;
             state.usage = action.payload.usage
         },
+        updateUsage: (state, action: PayloadAction<Usage>) => {
+            if (state.usage) {
+                state.usage.used = action.payload.used;
+                state.usage.remaining = action.payload.remaining;
+                state.usage.limit = action.payload.limit;
+            }
+        },
         logout: (state) => {
             state.id = '';
             state.name = '';
@@ -45,10 +52,12 @@ export const userSlice = createSlice({
             state.isLoggedIn = false;
             state.role = 'user';
             state.usage = null
+
+            localStorage.removeItem("sb-cbbvploublqutmbiwwaq-auth-token");
         } 
     }
 });
 
-export const { storeLogin, logout } = userSlice.actions;
+export const { storeLogin, logout, updateUsage } = userSlice.actions;
 
 export default userSlice.reducer;

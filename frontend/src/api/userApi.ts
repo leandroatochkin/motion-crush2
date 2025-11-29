@@ -1,10 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { getToken } from "../auth/token"
+import { Usage } from "../store/slices/User"
 
 export interface UserLoginData {
     email: string
     password: string
     repeatPassword?: string
+}
+
+export interface UserResponse {
+   ok: boolean
+   usage: Usage
 }
 
 interface UserId {
@@ -31,7 +37,7 @@ export const userApiSlice = createApi({
       },
     }),
     endpoints: (builder) => ({
-      checkLogin: builder.mutation<void, UserId>({
+      checkLogin: builder.mutation<UserResponse, UserId>({
         query: (payload) => ({
           url: `/auth/check-login`,
           method: "POST",

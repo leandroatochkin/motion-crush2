@@ -24,6 +24,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from '../../store/store'
 import ImageEditorModal from "../../components/ImgEditor/ImgEditor";
 import { useMobile } from "../../utils/hooks/hooks";
+import { supabase } from "../../auth/supabase";
 
 
 
@@ -75,6 +76,19 @@ const Main = () => {
   
 
   const isMobile = useMobile()
+
+React.useEffect(() => {
+  supabase.auth.getSession().then((res) => {
+    console.log("DRAW PAGE SESSION:", res);
+  });
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log("DRAW AUTH CHANGE:", event, session);
+  });
+}, []);
+
+console.log("URL RIGHT NOW:", window.location.href);
+console.log("HASH:", window.location.hash);
 
   const styles = {
     appContainer:

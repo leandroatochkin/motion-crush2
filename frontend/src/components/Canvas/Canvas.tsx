@@ -4,21 +4,43 @@ import { Download, ClearPanel, Eraser } from "../../assets/icons";
 import style from "./Canvas.module.css";
 import { useSelector } from "react-redux";
 import type { RootState } from '../../store/store'
-import { Box, Button, Paper, Tooltip, Typography } from "@mui/material";
+import { 
+  Box, 
+  Button, 
+  Paper, 
+  Tooltip, 
+  Typography,
+  Chip,
+ } from "@mui/material";
 import { notify } from "../../lib/notifications/notify";
-
+import { useCreateSketchMutation } from "../../api/sketchApi";
+import { useDispatch } from "react-redux";
+import { updateUsage } from "../../store/slices/User";
 
 
 const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
   const canvasRef = useRef(null);
   const watermarkRef = useRef(null);
-
+  const dispatch = useDispatch()
 
   const theme = useSelector((state: RootState) => state.theme);
   const user = useSelector((state: RootState) => state.user);
-  const usage = useSelector((state: RootState) => state.user.usage);
+  const remaining = useSelector((state: RootState) => state.user?.usage?.remaining) || 0;
 
-  console.log(usage)
+  console.log(remaining)
+  const [createSketch] = useCreateSketchMutation()
+
+
+
+const handleMakeSketch = async () => {
+  const res = await createSketch({ userId: user.id }).unwrap();
+
+  dispatch(updateUsage({
+    used: res.used,
+    limit: res.limit,
+    remaining: res.remaining
+  }));
+};
    
   const bgSec = theme.colors.backgroundSecondary
 
@@ -36,6 +58,7 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
           link.href = dataUrl;
           link.download = `${downloadTitle}.jpg`;
           link.click();
+          handleMakeSketch()
         })
         .catch((e)=>{
           console.error(e)
@@ -43,6 +66,7 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
         })
         .finally(() => {
           // Hide the watermark after screenshot
+          
           notify("Imagen capturada", "success")
           if (watermarkRef.current) {
             watermarkRef.current.style.display = "none";
@@ -116,9 +140,12 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
             </Tooltip>
           ))}
           </Box>
-          {/* <Typography>
-            {`Te quedan ${usage.remaining} esquemas en la capa gratuita`}
-          </Typography> */}
+
+          <Chip
+          color={remaining < 4 ? 'error' : 'success'}
+          label={`Te quedan ${remaining} esquemas en la capa gratuita`}
+          />
+              
           <Box
           sx={{
             height: '100%',
@@ -160,13 +187,13 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
             right: "10px",
             fontSize: "20px",
             fontWeight: "bold",
-            color: "rgba(255, 255, 255, 0.5)",
+            color: "red",
             pointerEvents: "none",
             display: "none",
             zIndex: '999999' // Hidden during normal rendering
           }}
         >
-          {`Motion-Crush 1.0`}
+          {`Motion-Crush 2.0`}
         </div>
       </Paper>
     </Box>
