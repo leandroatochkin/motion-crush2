@@ -20,6 +20,8 @@ import { useMobile } from '../../utils/hooks/hooks';
 import { supabase } from '../../auth/supabase';
 import { notify } from '../../lib/notifications/notify';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 interface ResetPasswordData {
     password: string;
@@ -45,6 +47,9 @@ const ResetPassword = () => {
 
     const isMobile = useMobile();
     const navigate = useNavigate();
+
+    const theme = useSelector((state: RootState) => state.theme);
+    
 
     useEffect(() => {
         // Check if we have a valid recovery session (user came from email link)
@@ -158,7 +163,7 @@ const ResetPassword = () => {
                             <Typography
                                 variant='h4'
                                 fontFamily={'PTSerif-Bold, sans-serif'}
-                                color='#276329'
+                                color={theme.colors.primary}
                                 textAlign='start'
                             >
                                 Nueva contraseña
@@ -250,7 +255,7 @@ const ResetPassword = () => {
                                     type='submit'
                                     variant='contained'
                                     sx={{
-                                        background: '#276329',
+                                        background: theme.colors.primary,
                                         mt: 4
                                     }}
                                     fullWidth
@@ -262,7 +267,7 @@ const ResetPassword = () => {
                                 <Button
                                     variant='text'
                                     sx={{
-                                        color: '#276329',
+                                        color: theme.colors.primary,
                                         mt: 2
                                     }}
                                     fullWidth
@@ -311,7 +316,7 @@ const ResetPassword = () => {
                         <Typography
                             variant='h4'
                             fontFamily={'PTSerif-Bold, sans-serif'}
-                            color='#276329'
+                            color={theme.colors.primary}
                             textAlign='start'
                         >
                             ¿Olvidaste tu contraseña?
@@ -367,7 +372,7 @@ const ResetPassword = () => {
                                     type='submit'
                                     variant='contained'
                                     sx={{
-                                        background: '#276329',
+                                        background: theme.colors.primary,
                                         mt: 4
                                     }}
                                     fullWidth
@@ -381,7 +386,7 @@ const ResetPassword = () => {
                         <Button
                             variant='text'
                             sx={{
-                                color: '#276329',
+                                color: theme.colors.primary,
                                 mt: 2
                             }}
                             fullWidth

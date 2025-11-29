@@ -27,7 +27,7 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
   const user = useSelector((state: RootState) => state.user);
   const remaining = useSelector((state: RootState) => state.user?.usage?.remaining) || 0;
 
-  console.log(remaining)
+
   const [createSketch] = useCreateSketchMutation()
 
 

@@ -77,18 +77,7 @@ const Main = () => {
 
   const isMobile = useMobile()
 
-React.useEffect(() => {
-  supabase.auth.getSession().then((res) => {
-    console.log("DRAW PAGE SESSION:", res);
-  });
 
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log("DRAW AUTH CHANGE:", event, session);
-  });
-}, []);
-
-console.log("URL RIGHT NOW:", window.location.href);
-console.log("HASH:", window.location.hash);
 
   const styles = {
     appContainer:

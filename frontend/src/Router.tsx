@@ -1,10 +1,11 @@
 import ProtectedRoute from "./auth/ProtectedRoute"
 import Dashboard from "./components/Dashboard/Dashboard"
 import Main from "./views/main/Main"
-import NotFoundPage from "./views/NotFound"
+import NotFoundPage from "./views/notFound/NotFound"
 import Login from "./views/login/Login"
 import AppAuth from "./auth/AuthListener"
 import ResetPassword from "./views/reset-password/ResetPassword"
+import TrialOver from "./views/trial-over/TrialOver"
 import { createBrowserRouter } from "react-router-dom"
 
 
@@ -35,6 +36,14 @@ export const router = createBrowserRouter([
         element: (
           <Dashboard>
             <ResetPassword />
+          </Dashboard>
+        ),
+      },
+      {
+        path: '/trial-over',
+        element: (
+          <Dashboard>
+            <TrialOver />
           </Dashboard>
         ),
       }

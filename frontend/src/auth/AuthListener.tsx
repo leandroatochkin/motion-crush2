@@ -15,12 +15,11 @@ export default function AppAuth() {
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   const [isLoading, setIsLoading] = useState(true); // ✅ Add loading state
   
-  console.log("🔍 AuthListener - Current location:", location.pathname, "isLoggedIn:", isLoggedIn);
   
   useEffect(() => {
     // Check for existing session on mount
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log("✅ Initial session check:", session?.user?.email || "No session");
+    
       
       if (session) {
         try {
@@ -29,7 +28,7 @@ export default function AppAuth() {
           const res = (checkResult as any)?.data ?? checkResult;
           const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
           
-          console.log("📊 Fetched usage:", usage);
+      
           
           dispatch(storeLogin({
             id: session.user.id,
@@ -43,11 +42,11 @@ export default function AppAuth() {
           
           // If on login page and have session, redirect to draw
           if (location.pathname === '/') {
-            console.log("🚀 Navigating to /draw");
+       
             navigate("/draw", { replace: true });
           }
         } catch (error) {
-          console.error("❌ Error fetching user data:", error);
+          console.error("Error fetching user data:", error);
         }
       }
       
@@ -57,7 +56,6 @@ export default function AppAuth() {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("🔔 AUTH EVENT:", event, session?.user?.email || "No session");
         
         if (event === "SIGNED_IN" && session) {
           try {
@@ -74,19 +72,16 @@ export default function AppAuth() {
               usage
             }));
             setToken(session.access_token);
-            console.log("🚀 User signed in, navigating to /draw");
             navigate("/draw", { replace: true });
           } catch (error) {
             console.error("❌ Error on sign in:", error);
           }
         } 
         else if (event === "SIGNED_OUT") {
-          console.log("👋 User signed out, navigating to /");
           dispatch(logout());
           navigate("/", { replace: true });
         }
         else if (event === "TOKEN_REFRESHED" && session) {
-          console.log("🔄 Token refreshed");
           setToken(session.access_token);
         }
       }

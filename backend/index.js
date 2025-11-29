@@ -4,7 +4,6 @@ dotenv.config();
 import express from 'express';
 import checkLoginRoute from './api/routes/auth/checkLogin.js';
 import createSketchRoute from './api/routes/sketches/createSketch.js';
-import checkUsageRoute from './api/routes/usage/checkUsage.js';
 import cors from 'cors';
 
 const app = express();
@@ -35,6 +34,6 @@ app.use(bodyParser.json());
 
 app.use('/auth/check-login', checkLoginRoute);
 app.use('/sketches/create-sketch', createSketchRoute);
-app.use('/usage/check-usage', checkUsageRoute);
+
 
 app.listen(3000, ()=>console.log(`listening on port ${host}`))

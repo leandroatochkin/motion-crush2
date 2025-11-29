@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom';
 import type { RootState } from "../../store/store";
 import { setToken } from '../../auth/token';
 import { useCheckLoginMutation } from '../../api/userApi';
+
 //import ForgotPasswordDialog from '../../components/dialogs/ForgotPassword';
 
 
@@ -59,6 +60,8 @@ const navigate = useNavigate()
 
 const handleResetPassword = () => navigate('/reset-password')
 
+const theme = useSelector((state: RootState) => state.theme);
+
 //const {mutate, isPending} = useLogIn()
 
 const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
@@ -69,9 +72,6 @@ React.useEffect(() => {
   }
 }, [isLoggedIn]);
 
-React.useEffect(() => {
-  console.log("isLoggedIn changed:", isLoggedIn);
-}, [isLoggedIn]);
 
 const onSubmit = async (data: UserLoginData) => {
   setLoading(true);
@@ -103,7 +103,6 @@ const onSubmit = async (data: UserLoginData) => {
     const userId = authData.user?.id;
     const accessToken = authData.session?.access_token;
 
-    console.log("access token",accessToken)
     if (accessToken) {
       setToken(accessToken);            
     } else {
@@ -166,10 +165,22 @@ const onSubmit = async (data: UserLoginData) => {
         {
             !loading ? (
                 <>
+        <Box
+        sx={{
+          backgroundImage: 'url(/logo2.png)',
+          backgroundPosition: 'center',
+          height: '100px',
+          width: '100%',
+          borderRadius: 4,
+          mb: 2
+        }}
+        >
+      
+        </Box>
         <Typography
         variant='h4'
         fontFamily={'PTSerif-Bold, sans-serif'}
-        color='#276329'
+        color={theme.colors.primary}
         textAlign='start'
         >
            {
@@ -193,7 +204,7 @@ const onSubmit = async (data: UserLoginData) => {
                 <Typography
                 fontWeight='bold'
                 textAlign='start'
-                color='#333'
+                color={theme.colors.primary}
                 >
                     Email
                 </Typography>
@@ -220,7 +231,7 @@ const onSubmit = async (data: UserLoginData) => {
                 <Typography
                 fontWeight='bold'
                 textAlign='start'
-                color='#333'
+                color={theme.colors.primary}
                 >
                     Contraseña
                 </Typography>
@@ -271,7 +282,7 @@ const onSubmit = async (data: UserLoginData) => {
                 <Typography
                 fontWeight='bold'
                 textAlign='start'
-                color='#333'
+                color={theme.colors.primary}
                 >
                     Repetir contraseña
                 </Typography>
@@ -307,7 +318,7 @@ const onSubmit = async (data: UserLoginData) => {
             type='submit'
             variant='contained'
             sx={{
-                background: '#276329',
+                background: theme.colors.primary,
                 mt: 4
             }}
             fullWidth
@@ -345,10 +356,10 @@ const onSubmit = async (data: UserLoginData) => {
           underline='none'
           fontFamily={'PTSerif-Bold, sans-serif'}
           sx={{
-            color: '#276329',
+            color: theme.colors.text,
             textDecoration: 'none',
             '&:hover': {
-              color: '#2E7D32',
+              color: theme.colors.primary,
               cursor: 'pointer'
             },
           }}
@@ -360,7 +371,7 @@ const onSubmit = async (data: UserLoginData) => {
           <Typography
           fontFamily={'PTSerif-Bold, sans-serif'}
           sx={{
-            color: '#276329'
+            color: theme.colors.text
           }}
           variant={'body1'}
           aria-label='link para recuperar clave'
@@ -372,7 +383,7 @@ const onSubmit = async (data: UserLoginData) => {
                     fontWeight: 'bolder',
                     cursor: 'pointer',
                     '&:hover': {
-                    color: '#2E7D32',
+                    color: theme.colors.primary,
                     textDecoration: 'underline',
                     },
                 }}

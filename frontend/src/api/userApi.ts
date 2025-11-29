@@ -25,7 +25,6 @@ export const userApiSlice = createApi({
         try {
           // Dynamically import Auth0, outside hooks
           const token = getToken()
-          console.log("at", token)
           if (token) {
             headers.set("authorization", `Bearer ${token}`)
           }
