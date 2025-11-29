@@ -3,6 +3,7 @@ import {
   useEffect, 
   useCallback } from 'react';
 
+
  export const useScrollNavigation = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [scrollY, setScrollY] = useState(0);
@@ -85,3 +86,35 @@ export function useAsync<T = any>(asyncFn: AsyncFunction<T>) {
 
   return { run, loading, error, result };
 }
+
+
+// export function useUsage(userId?: string) {
+//   const [usage, setUsage] = useState<{ used: number; limit: number; remaining: number } | null>(null);
+//   const [loading, setLoading] = useState(false);
+
+//   const [checkUsage, { isLoading }] = useLazyCheckUserUsageQuery();
+
+//   const fetchUsage = async () => {
+//     if (!userId) return;
+//     setLoading(true);
+//     try {
+//       const { data } = await checkUsage(userId);
+//       // Normalize the response to the expected shape; some responses may be a JSON string.
+//       const usageData =
+//         typeof data === 'string'
+//           ? (JSON.parse(data) as { used: number; limit: number; remaining: number })
+//           : (data as { used: number; limit: number; remaining: number });
+//       setUsage(usageData);
+//     } catch (e) {
+//       console.error(e);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchUsage();
+//   }, [userId]);
+
+//   return { usage, loading, refetch: fetchUsage };
+// }

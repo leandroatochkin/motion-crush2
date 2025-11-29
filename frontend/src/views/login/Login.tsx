@@ -27,6 +27,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { storeLogin } from '../../store/slices/User';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from "../../store/store";
+import { setToken } from '../../auth/token';
+import { useCheckLoginMutation } from '../../api/userApi';
 //import ForgotPasswordDialog from '../../components/dialogs/ForgotPassword';
 
 
@@ -38,6 +40,7 @@ import type { RootState } from "../../store/store";
     const [openForgotPasswordDialog, setOpenForgotPasswordDialog] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [isLogin, setIsLogin] = useState<boolean>(true)
+    const [checkLogin] = useCheckLoginMutation();
     const {
         handleSectionClick
       } = useScrollNavigation();
@@ -95,20 +98,28 @@ const onSubmit = async (data: UserLoginData) => {
       return; 
     }
 
-    console.log("dispatching", {
-            id: authData.user?.id,
-            email: authData.user?.email,
-            isLoggedIn: true
-            });
+    const userId = authData.user?.id;
+    const accessToken = authData.session?.access_token;
 
-   
+    console.log("access token",accessToken)
+    if (accessToken) {
+      setToken(accessToken);            
+    } else {
+      console.warn("No access token returned from Supabase");
+    }
+
+    const checkResult = await checkLogin({ userId });
+    const res = (checkResult as any)?.data ?? checkResult;
+    const usage = res?.usage ?? 0;
+
     dispatch(
       storeLogin({
         id: authData.user?.id,
         name: authData.user?.email,
         email: authData.user?.email ?? data.email,
         isLoggedIn: true,
-        role: "user"        
+        role: "user",
+        usage: usage
       })
     );
 

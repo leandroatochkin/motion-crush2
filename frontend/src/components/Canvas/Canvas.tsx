@@ -4,8 +4,9 @@ import { Download, ClearPanel, Eraser } from "../../assets/icons";
 import style from "./Canvas.module.css";
 import { useSelector } from "react-redux";
 import type { RootState } from '../../store/store'
-import { Box, Button, Paper, Tooltip } from "@mui/material";
+import { Box, Button, Paper, Tooltip, Typography } from "@mui/material";
 import { notify } from "../../lib/notifications/notify";
+
 
 
 const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
@@ -14,7 +15,11 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
 
 
   const theme = useSelector((state: RootState) => state.theme);
-  
+  const user = useSelector((state: RootState) => state.user);
+  const usage = useSelector((state: RootState) => state.user.usage);
+
+  console.log(usage)
+   
   const bgSec = theme.colors.backgroundSecondary
 
   const handleScreenshot = () => {
@@ -111,6 +116,9 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
             </Tooltip>
           ))}
           </Box>
+          {/* <Typography>
+            {`Te quedan ${usage.remaining} esquemas en la capa gratuita`}
+          </Typography> */}
           <Box
           sx={{
             height: '100%',

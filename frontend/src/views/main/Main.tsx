@@ -27,6 +27,7 @@ import { useMobile } from "../../utils/hooks/hooks";
 
 
 
+
 // Categories
 const categories_3d = {
   animals: { name: "Animales", data: animals_3d },
@@ -71,7 +72,7 @@ const Main = () => {
   const theme = useSelector((state: RootState) => state.theme);
   const user = useSelector((state: RootState) => state.user);
 
-  console.log(user)
+  
 
   const isMobile = useMobile()
 

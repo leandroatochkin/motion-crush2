@@ -1,25 +1,23 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { getToken } from "../auth/token"
 
-export interface UserLoginData {
-    email: string
-    password: string
-    repeatPassword?: string
+export interface SketchCreationData {
+    ok: boolean
+    sketchId: string
 }
 
 interface UserId {
     userId: string
 }
 
-export const userApiSlice = createApi({
-    reducerPath: "userApiSlice",
+export const sketchApiSlice = createApi({
+    reducerPath: "sketchApiSlice",
     baseQuery: fetchBaseQuery({
       baseUrl: import.meta.env.VITE_SERVER_HOST,
       prepareHeaders: async (headers) => {
         try {
           // Dynamically import Auth0, outside hooks
           const token = getToken()
-          console.log("at", token)
           if (token) {
             headers.set("authorization", `Bearer ${token}`)
           }
@@ -31,23 +29,16 @@ export const userApiSlice = createApi({
       },
     }),
     endpoints: (builder) => ({
-      checkLogin: builder.mutation<void, UserId>({
+      createSketch: builder.mutation<UserId, SketchCreationData>({
         query: (payload) => ({
-          url: `/auth/check-login`,
+          url: `/sketches/create-sketch`,
           method: "POST",
           body: payload,
         }),
       }),
-    //   checkUserUsage: builder.query<string, string>({
-    //     query: (userId) => ({
-    //         url: `/usage/check-usage?userId=${userId}`,
-    //         method: "GET",
-    //     }),
-    //     })
     }),
   })
   
   export const {
-        useCheckLoginMutation
-        //useLazyCheckUserUsageQuery
-  } = userApiSlice
+        useCreateSketchMutation
+  } = sketchApiSlice

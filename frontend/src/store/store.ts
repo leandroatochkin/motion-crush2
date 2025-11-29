@@ -1,17 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userReducer from './slices/User'
-import themeReducer from './slices/Theme'
+import { userApiSlice } from '../api/userApi'
+import { sketchApiSlice } from '../api/sketchApi'
+import rootReducer from './RootReducer'
 
 
 export const store = configureStore({
-  reducer: {
-    user: userReducer,
-    theme: themeReducer
-  },
+  reducer: rootReducer,
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
+                              .concat(
+                                userApiSlice.middleware,
+                                sketchApiSlice.middleware
+                              )                         
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
