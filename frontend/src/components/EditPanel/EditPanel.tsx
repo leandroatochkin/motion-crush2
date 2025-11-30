@@ -74,7 +74,7 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
             justifyContent: 'center',
             alignItems: 'center',
             height: isMobile ? '100%' : '30px',
-            mt: !isMobile ? 20 : 0
+            mt: !isMobile ? 10 : 0
           }
     }
 

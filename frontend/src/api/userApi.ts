@@ -20,7 +20,8 @@ interface UserId {
 export const userApiSlice = createApi({
     reducerPath: "userApiSlice",
     baseQuery: fetchBaseQuery({
-      baseUrl: import.meta.env.VITE_SERVER_HOST,
+         baseUrl: 'https://motion-back.onrender.com',
+      //import.meta.env.VITE_SERVER_HOST,
       prepareHeaders: async (headers) => {
         try {
           // Dynamically import Auth0, outside hooks

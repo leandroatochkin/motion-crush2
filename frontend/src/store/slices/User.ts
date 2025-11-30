@@ -14,6 +14,7 @@ export interface UserState {
     isLoggedIn: boolean;
     role: 'user' | 'admin';
     usage: Usage | null,
+    plan: 'free' | 'premium' | 'pro' | null
 }
 
 
@@ -23,20 +24,22 @@ const initialState: UserState = {
     email: '',
     isLoggedIn: false,
     role: 'user',
-    usage: null
+    usage: null,
+    plan: 'free'
 }
 
 export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'; isLoggedIn: boolean, usage: Usage}>) => {
+        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'; isLoggedIn: boolean, usage: Usage, plan: 'free' | 'premium' | 'pro'}>) => {
             state.id = action.payload.id;
             state.name = action.payload.name;
             state.email = action.payload.email;
             state.isLoggedIn = action.payload.isLoggedIn;
             state.role = action.payload.role;
-            state.usage = action.payload.usage
+            state.usage = action.payload.usage;
+            state.plan = action.payload.plan;
         },
         updateUsage: (state, action: PayloadAction<Usage>) => {
             if (state.usage) {
@@ -51,7 +54,8 @@ export const userSlice = createSlice({
             state.email = '';
             state.isLoggedIn = false;
             state.role = 'user';
-            state.usage = null
+            state.usage = null;
+            state.plan = null
 
             localStorage.removeItem("sb-cbbvploublqutmbiwwaq-auth-token");
         } 

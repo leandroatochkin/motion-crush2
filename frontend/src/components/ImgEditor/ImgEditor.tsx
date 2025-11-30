@@ -16,6 +16,8 @@ import { removeBackground } from "@imgly/background-removal";
 import { notify } from "../../lib/notifications/notify";
 import { ClockLoader } from 'react-spinners'
 import { useAsync } from "../../utils/hooks/hooks";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 interface Props {
   open: boolean;
@@ -28,7 +30,8 @@ const ImageEditorModal: React.FC<Props> = ({ open, onClose, onSave }) => {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [widthPercent, setWidthPercent] = useState<number>(100);
   const [heightPercent, setHeightPercent] = useState<number>(100);
-
+  
+  const plan = useSelector((state: RootState) => state.user.plan)
 
   const MAX_FILE_SIZE_KB = import.meta.env.VITE_MAX_IMAGE_UPLOADSIZE_KB;
 
@@ -60,6 +63,7 @@ const ImageEditorModal: React.FC<Props> = ({ open, onClose, onSave }) => {
 
   const handleRemoveBackground = async () => {
   const { data, error } = await run(imgSrc);
+
 
   if (error) {
     notify("Error al quitar fondo", "error");
@@ -198,7 +202,7 @@ const ImageEditorModal: React.FC<Props> = ({ open, onClose, onSave }) => {
               <Button
                 variant="contained"
                 onClick={handleRemoveBackground}
-                disabled={loading}
+                disabled={loading || plan !== 'pro'}
               >
                 {!loading ? "Remover fondo" : <CircularProgress size={22} color="info"/>}
               </Button>

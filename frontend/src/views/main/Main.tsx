@@ -19,12 +19,20 @@ import Searchbar from "../../components/inputs/Searchbar";
 import { TopView, Isometric, Help } from "../../assets/icons";
 import HelpModal from "../../components/HelpModal/HelpModal";
 import EditPanel from "../../components/EditPanel/EditPanel";
-import { Box, Button, FormControl, MenuItem, Select } from "@mui/material";
+import { 
+  Box, 
+  Button, 
+  FormControl, 
+  MenuItem, 
+  Select,
+  Tooltip
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import type { RootState } from '../../store/store'
 import ImageEditorModal from "../../components/ImgEditor/ImgEditor";
 import { useMobile } from "../../utils/hooks/hooks";
 import { supabase } from "../../auth/supabase";
+
 
 
 
@@ -116,9 +124,11 @@ const Main = () => {
           },
     select:
           {
-                m: 1,
+                m: !isMobile ? 1 : 0,
                 borderRadius: 4,
-                background: theme.colors.backgroundSecondary
+                background: theme.colors.backgroundSecondary,
+                height: !isMobile ? '4em' : '2em',
+                minHeight: !isMobile ? '1.435em' : '1em'
           },
     button:
           {
@@ -316,7 +326,8 @@ const allAssets = Object.values(fullCategories)
                   width: '100%',
                   display: 'flex',
                   justifyContent: 'space-evenly',
-                  marginTop: '2%'
+                  marginTop: '2%',
+                  mb: !isMobile ? 4 : 0
             }}>
               <Button onClick={() => setCurrentView(categories_aerial)} 
               sx={styles.button}>
@@ -331,16 +342,32 @@ const allAssets = Object.values(fullCategories)
                 <Help />
               </Button>
 
-              <Button
+              <Tooltip
+              title={user.plan === 'free' ? 'No disponible en este plan' : 'Añadir texto'}
+              >
+               <span>
+                 <Button
                 onClick={() => setTextAssets(prev => [...prev, {}])}
-                  sx={styles.button}>
+                  sx={styles.button}
+                  disabled={user.plan === 'free'}
+                  >
                 ➕ Texto
               </Button>
-              <Button
+               </span>
+              </Tooltip>
+              <Tooltip
+              title={user.plan === 'free' ? 'No disponible en este plan' : 'Añadir imagen'}
+              
+              >
+                <span>
+                  <Button
                 onClick={() => setOpenEditor(true)}
+                disabled={user.plan === 'free'}
                   sx={styles.button}>
                 ➕ Imagen
               </Button>
+                </span>
+              </Tooltip>
             </Box>
           </Box>
 

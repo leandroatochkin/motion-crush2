@@ -16,6 +16,7 @@ import { notify } from "../../lib/notifications/notify";
 import { useCreateSketchMutation } from "../../api/sketchApi";
 import { useDispatch } from "react-redux";
 import { updateUsage } from "../../store/slices/User";
+import { useMobile } from "../../utils/hooks/hooks";
 
 
 const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
@@ -30,7 +31,7 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
 
   const [createSketch] = useCreateSketchMutation()
 
-
+  const isMobile = useMobile()
 
 const handleMakeSketch = async () => {
   const res = await createSketch({ userId: user.id }).unwrap();
@@ -67,7 +68,12 @@ const handleMakeSketch = async () => {
         .finally(() => {
           // Hide the watermark after screenshot
           
-          notify("Imagen capturada", "success")
+          if(!isMobile){
+            notify("Imagen capturada", "success")
+          }
+          else {
+            notify(`Imagen capturada, te quedan ${remaining} gratis!`, `${remaining < 4 ? 'error' : 'success'}`)
+          }
           if (watermarkRef.current) {
             watermarkRef.current.style.display = "none";
           }
@@ -120,7 +126,8 @@ const handleMakeSketch = async () => {
           borderRadius: 0,
           height: '6%',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          mb: isMobile ? 2 : 'auto'
         }}
         
       >
@@ -141,10 +148,15 @@ const handleMakeSketch = async () => {
           ))}
           </Box>
 
-          <Chip
+          {
+            !isMobile ? 
+            <Chip
           color={remaining < 4 ? 'error' : 'success'}
           label={`Te quedan ${remaining} esquemas en la capa gratuita`}
           />
+          :
+          null
+          }
               
           <Box
           sx={{

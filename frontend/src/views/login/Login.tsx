@@ -112,6 +112,7 @@ const onSubmit = async (data: UserLoginData) => {
     const checkResult = await checkLogin({ userId });
     const res = (checkResult as any)?.data ?? checkResult;
     const usage = res?.usage ?? 0;
+    const plan = res?.plan ?? null;
 
     dispatch(
       storeLogin({
@@ -120,7 +121,8 @@ const onSubmit = async (data: UserLoginData) => {
         email: authData.user?.email ?? data.email,
         isLoggedIn: true,
         role: "user",
-        usage: usage
+        usage: usage,
+        plan: plan,
       })
     );
 

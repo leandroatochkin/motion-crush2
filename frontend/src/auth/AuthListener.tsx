@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { storeLogin, logout } from "../store/slices/User";
 import { useCheckLoginMutation } from "../api/userApi";
 import type { RootState } from "../store/store";
+import { CircleLoader } from "react-spinners";
 
 export default function AppAuth() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function AppAuth() {
           const checkResult = await checkLogin({ userId: session.user.id });
           const res = (checkResult as any)?.data ?? checkResult;
           const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
-          
+          const plan = res?.plan ?? 'free';
       
           
           dispatch(storeLogin({
@@ -36,7 +37,8 @@ export default function AppAuth() {
             email: session.user.email || '',
             role: res?.role || 'user',
             isLoggedIn: true,
-            usage
+            usage,
+            plan
           }));
           setToken(session.access_token);
           
@@ -61,7 +63,8 @@ export default function AppAuth() {
           try {
             const checkResult = await checkLogin({ userId: session.user.id });
             const res = (checkResult as any)?.data ?? checkResult;
-            const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
+            const usage = res?.usage ?? { used: 0, limit: 10, remaining: 10 };
+            const plan = res?.plan ?? 'free';
             
             dispatch(storeLogin({
               id: session.user.id,
@@ -69,7 +72,8 @@ export default function AppAuth() {
               email: session.user.email || '',
               role: res?.role || 'user',
               isLoggedIn: true,
-              usage
+              usage,
+              plan
             }));
             setToken(session.access_token);
             navigate("/draw", { replace: true });
@@ -99,9 +103,10 @@ export default function AppAuth() {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        height: '100vh' 
+        height: '100vh',
+        width: '100vw' 
       }}>
-        Loading...
+        <CircleLoader />
       </div>
     );
   }
