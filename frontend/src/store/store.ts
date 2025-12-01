@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { userApiSlice } from '../api/userApi'
 import { sketchApiSlice } from '../api/sketchApi'
+import { paymentApiSlice } from '../api/paymentsApi'
 import rootReducer from './RootReducer'
 
 
@@ -12,7 +13,8 @@ export const store = configureStore({
         getDefaultMiddleware()
                               .concat(
                                 userApiSlice.middleware,
-                                sketchApiSlice.middleware
+                                sketchApiSlice.middleware,
+                                paymentApiSlice.middleware
                               )                         
 })
 

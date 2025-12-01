@@ -5,6 +5,7 @@ import express from 'express';
 import checkLoginRoute from './api/routes/auth/checkLogin.js';
 import createSketchRoute from './api/routes/sketches/createSketch.js';
 import paymentRoute from './api/routes/payment/payment.js';
+import validateCaptchaRoute from './api/routes/auth/validateCaptcha.js';
 import cors from 'cors';
 
 const app = express();
@@ -53,5 +54,6 @@ app.use((req, res, next) => {
 app.use('/auth/check-login', checkLoginRoute);
 app.use('/sketches/create-sketch', createSketchRoute);
 app.use('/payment', paymentRoute)
+app.use('/validate-captcha', validateCaptchaRoute);
 
 app.listen(3000, ()=>console.log(`listening on port ${host}`))

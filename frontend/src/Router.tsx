@@ -7,6 +7,7 @@ import AppAuth from "./auth/AuthListener"
 import ResetPassword from "./views/reset-password/ResetPassword"
 import TrialOver from "./views/trial-over/TrialOver"
 import { createBrowserRouter } from "react-router-dom"
+import Plans from "./views/plans/Plans"
 
 
 export const router = createBrowserRouter([
@@ -44,6 +45,14 @@ export const router = createBrowserRouter([
         element: (
           <Dashboard>
             <TrialOver />
+          </Dashboard>
+        ),
+      },
+      {
+        path: '/plans',
+        element: (
+          <Dashboard>
+            <Plans />
           </Dashboard>
         ),
       }

@@ -1,28 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { getToken } from "../auth/token"
-import { Usage } from "../store/slices/User"
 
-export interface UserLoginData {
-    email: string
-    password: string
-    repeatPassword?: string
+
+export interface PaymentData {
+    userId: string,
+    email: string,
+    amount: number,
+    plan: string,
+    captchaToken?: string
 }
 
-export interface UserResponse {
-   ok: boolean
-   usage: Usage
-}
 
-interface UserId {
-    userId: string
-}
-
-interface Captcha {
-  token: string
-}
-
-export const userApiSlice = createApi({
-    reducerPath: "userApiSlice",
+export const paymentApiSlice = createApi({
+    reducerPath: "paymentApiSlice",
     baseQuery: fetchBaseQuery({
          baseUrl: 'https://motion-back.onrender.com',
       //import.meta.env.VITE_SERVER_HOST,
@@ -41,16 +31,9 @@ export const userApiSlice = createApi({
       },
     }),
     endpoints: (builder) => ({
-      checkLogin: builder.mutation<UserResponse, UserId>({
+      createSubscription: builder.mutation<any, PaymentData>({
         query: (payload) => ({
-          url: `/auth/check-login`,
-          method: "POST",
-          body: payload,
-        }),
-      }),
-      validateCaptcha: builder.mutation<string, Captcha>({
-        query: (payload) => ({
-          url: `/validate-captcha`,
+          url: `/payment`,
           method: "POST",
           body: payload,
         }),
@@ -65,7 +48,5 @@ export const userApiSlice = createApi({
   })
   
   export const {
-        useCheckLoginMutation,
-        useValidateCaptchaMutation
-        //useLazyCheckUserUsageQuery
-  } = userApiSlice
+        useCreateSubscriptionMutation
+  } = paymentApiSlice
