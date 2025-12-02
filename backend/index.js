@@ -5,22 +5,24 @@ import express from 'express';
 import checkLoginRoute from './api/routes/auth/checkLogin.js';
 import createSketchRoute from './api/routes/sketches/createSketch.js';
 import paymentRoute from './api/routes/payment/payment.js';
-import validateCaptchaRoute from './api/routes/auth/validateCaptcha.js';
 import cors from 'cors';
+import validateCaptchaRoute from './api/routes/auth/validateCaptcha.js';
+import createPlansRoute from './api/routes/payment/mercadopago.js';
 
 const app = express();
 const host = process.env.PORT
 const environment = process.env.ENVIRONMENT
 
-const frontendURL = process.env.FRONTEND_URL_A;
+const frontendURLA = process.env.FRONTEND_URL_A;
+const frontendURLB = process.env.FRONTEND_URL_B;
 const allowedOrigins = [
-    frontendURL,
+    frontendURLA,
+    frontendURLB
 ];
-
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin)
-            return callback(null, true);
+            return callback(null, true); // Allow requests with no origin (e.g., mobile apps)
         if (allowedOrigins.includes(origin)) {
             callback(null, true);
         }
@@ -33,27 +35,13 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// ⚠️ AGREGA ESTE MIDDLEWARE DE DEBUG
-app.use((req, res, next) => {
-    console.log('📥 Request recibida:');
-    console.log('  Method:', req.method);
-    console.log('  URL:', req.url);
-    console.log('  Headers:', req.headers);
-    console.log('  Body (antes de parser):', req.body);
-    next();
-});
-
 app.use(bodyParser.json());
-
-// ⚠️ OTRO LOG DESPUÉS DEL PARSER
-app.use((req, res, next) => {
-    console.log('📦 Body después del parser:', req.body);
-    next();
-});
 
 app.use('/auth/check-login', checkLoginRoute);
 app.use('/sketches/create-sketch', createSketchRoute);
 app.use('/payment', paymentRoute)
 app.use('/validate-captcha', validateCaptchaRoute);
+app.use('/create-plans', createPlansRoute);
+
 
 app.listen(3000, ()=>console.log(`listening on port ${host}`))

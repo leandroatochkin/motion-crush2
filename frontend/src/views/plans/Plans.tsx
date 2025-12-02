@@ -50,7 +50,9 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
             // Validar captcha en el backend
             const captchaResponse = await validateCaptcha({token: captchaToken});
             
-            if (!captchaResponse.data?.includes("Captcha ok")) {
+            console.log(captchaResponse)
+
+            if (captchaResponse.data?.message?.includes("Captcha ok") === false) {
                 alert('Captcha inválido');
                 captchaRef.current?.resetCaptcha();
                 setCaptchaToken(null);
@@ -71,25 +73,27 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
             //     })
             // });
 
+            console.log(captchaToken)
+
             const paymentResponse = createSubscription({
-                userId: selectedPlan.userId,
-                 email: selectedPlan.email,
+                 userId: selectedPlan.userId || '1',
+                 email: selectedPlan.email || 'motioncrushapp@gmail.com',
                  amount: selectedPlan.amount,
                 plan: selectedPlan.plan,
-                captchaToken: captchaToken
+                //captchaToken: captchaToken
             })
 
-            const result = (await paymentResponse).data;
-
-            if (result.checkoutUrl) {
-                // Redirigir a MercadoPago
-                window.location.href = result.checkoutUrl;
-            } else {
-                alert('Error al procesar el pago');
-                // Reset captcha en caso de error
-                captchaRef.current?.resetCaptcha();
-                setCaptchaToken(null);
-            }
+            const result = await paymentResponse;
+            console.log(result)
+            // if (result.checkoutUrl) {
+            //     // Redirigir a MercadoPago
+            //     window.location.href = result.checkoutUrl;
+            // } else {
+            //     alert('Error al procesar el pago');
+            //     // Reset captcha en caso de error
+            //     captchaRef.current?.resetCaptcha();
+            //     setCaptchaToken(null);
+            // }
 
         } catch (error) {
             console.error('Error:', error);
@@ -226,7 +230,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                 <Typography
                 variant='h2'
                 >
-                    $5999/mes
+                    AR$5999/mes
                 </Typography>
                 </Box>
             </Paper>
@@ -310,7 +314,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                 <Typography
                 variant='h2'
                 >
-                    $9999/mes
+                    AR$9999/mes
                 </Typography>
                 </Box>
             </Paper>

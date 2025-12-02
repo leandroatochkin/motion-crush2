@@ -48,7 +48,7 @@ export const userApiSlice = createApi({
           body: payload,
         }),
       }),
-      validateCaptcha: builder.mutation<string, Captcha>({
+      validateCaptcha: builder.mutation<any, Captcha>({
         query: (payload) => ({
           url: `/validate-captcha`,
           method: "POST",
