@@ -10,6 +10,12 @@ export interface PaymentData {
     captchaToken?: string
 }
 
+export interface VerifyPaymentData {
+    userId: string
+    subscriptionId: string
+    collectionStatus: 'approved' | 'pending' | 'rejected'
+}
+
 
 export const paymentApiSlice = createApi({
     reducerPath: "paymentApiSlice",
@@ -38,6 +44,21 @@ export const paymentApiSlice = createApi({
           body: payload,
         }),
       }),
+      verifyPayment: builder.mutation<any, VerifyPaymentData>({
+        query: (payload) => ({
+          url: `/verify-payment`,
+          method: "POST",
+          body: payload,
+        }),
+      }),
+      cancelSubscription: builder.mutation<any, VerifyPaymentData>({
+        query: (payload) => ({
+          url: `/cancel-subscription`,
+          method: "POST",
+          body: payload,
+        }),
+      }),
+    
     //   checkUserUsage: builder.query<string, string>({
     //     query: (userId) => ({
     //         url: `/usage/check-usage?userId=${userId}`,
@@ -48,5 +69,6 @@ export const paymentApiSlice = createApi({
   })
   
   export const {
-        useCreateSubscriptionMutation
+        useCreateSubscriptionMutation,
+        useVerifyPaymentMutation
   } = paymentApiSlice

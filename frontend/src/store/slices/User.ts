@@ -17,6 +17,10 @@ export interface UserState {
     plan: 'free' | 'premium' | 'pro' | null
 }
 
+interface UpdatePlan {
+    plan: 'free' | 'premium' | 'pro' | null
+}
+
 
 const initialState: UserState = {
     id: '',
@@ -48,6 +52,11 @@ export const userSlice = createSlice({
                 state.usage.limit = action.payload.limit;
             }
         },
+        updatePlan: (state, action: PayloadAction<UpdatePlan>) => {
+            if (state.plan) {
+                state.plan = action.payload.plan
+            }
+        },
         logout: (state) => {
             state.id = '';
             state.name = '';
@@ -62,6 +71,6 @@ export const userSlice = createSlice({
     }
 });
 
-export const { storeLogin, logout, updateUsage } = userSlice.actions;
+export const { storeLogin, logout, updateUsage, updatePlan } = userSlice.actions;
 
 export default userSlice.reducer;

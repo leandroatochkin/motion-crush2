@@ -6,6 +6,7 @@ import { RootState } from '../../store/store'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { useValidateCaptchaMutation } from '../../api/userApi'
 import { useCreateSubscriptionMutation } from '../../api/paymentsApi'
+import { useMobile } from '../../utils/hooks/hooks'
 
 
 const Plans = () => {
@@ -21,6 +22,10 @@ const [selectedPlan, setSelectedPlan] = useState<PaymentData>({
     amount: 0,
     plan: 'free'
 })
+
+const isMobile = useMobile()
+
+useEffect(()=>console.log(isMobile),[isMobile])
 
 const handleCaptchaVerify = (token: string) => {
         setCaptchaToken(token);
@@ -73,27 +78,27 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
             //     })
             // });
 
-            console.log(captchaToken)
+
 
             const paymentResponse = createSubscription({
                  userId: selectedPlan.userId || '1',
                  email: selectedPlan.email || 'motioncrushapp@gmail.com',
                  amount: selectedPlan.amount,
                 plan: selectedPlan.plan,
-                //captchaToken: captchaToken
+       
             })
 
             const result = await paymentResponse;
             console.log(result)
-            // if (result.checkoutUrl) {
-            //     // Redirigir a MercadoPago
-            //     window.location.href = result.checkoutUrl;
-            // } else {
-            //     alert('Error al procesar el pago');
-            //     // Reset captcha en caso de error
-            //     captchaRef.current?.resetCaptcha();
-            //     setCaptchaToken(null);
-            // }
+            if (result.data?.checkoutUrl && result.data?.checkoutUrl.includes("https://www.mercadopago.com.ar/")) {
+                // Redirigir a MercadoPago
+                window.location.href = result.data?.checkoutUrl;
+            } else {
+                alert('Error al procesar el pago');
+                // Reset captcha en caso de error
+                captchaRef.current?.resetCaptcha();
+                setCaptchaToken(null);
+            }
 
         } catch (error) {
             console.error('Error:', error);
@@ -109,7 +114,8 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
     <Paper
     elevation={4}
     sx={{
-        p:4
+        p: isMobile ? 0 : 4,
+        height: isMobile ? '100dvh' : 'auto'
     }}
     >
         <Typography
@@ -121,7 +127,8 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
         <Divider orientation='horizontal'/>
         <Box
         sx={{
-            display: 'flex'
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row'
         }}
         >
             <Paper
@@ -249,7 +256,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                     color: '#fff'
                   },
             }}
-            onClick={()=>handlePlanSelection(9999, 'pro')}
+            onClick={()=>handlePlanSelection(1, 'pro')}
             >
                 <Box
                 sx={{
@@ -340,7 +347,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                         sx={{
                             background: theme.colors.primary
                         }}
-                        disabled={!captchaToken || validatingCaptcha}
+                        disabled={!captchaToken || validatingCaptcha || creatingSubscription}
                         fullWidth
                         onClick={handlePayment}
                     >

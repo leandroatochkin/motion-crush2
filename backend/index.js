@@ -8,6 +8,7 @@ import paymentRoute from './api/routes/payment/payment.js';
 import cors from 'cors';
 import validateCaptchaRoute from './api/routes/auth/validateCaptcha.js';
 import createPlansRoute from './api/routes/payment/mercadopago.js';
+import webHookRoute from './api/routes/payment/webhook.js';
 
 const app = express();
 const host = process.env.PORT
@@ -42,6 +43,7 @@ app.use('/sketches/create-sketch', createSketchRoute);
 app.use('/payment', paymentRoute)
 app.use('/validate-captcha', validateCaptchaRoute);
 app.use('/create-plans', createPlansRoute);
+app.use('/payment/webhook/mercadopago', webHookRoute);
 
 
 app.listen(3000, ()=>console.log(`listening on port ${host}`))
