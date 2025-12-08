@@ -7,6 +7,7 @@ import { storeLogin, logout } from "../store/slices/User";
 import { useCheckLoginMutation } from "../api/userApi";
 import type { RootState } from "../store/store";
 import { CircleLoader } from "react-spinners";
+import Dashboard from "../components/Dashboard/Dashboard";
 
 export default function AppAuth() {
   const navigate = useNavigate();
@@ -103,15 +104,9 @@ export default function AppAuth() {
   // ✅ Show loading spinner while checking session
   if (isLoading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        width: '100vw' 
-      }}>
-        <CircleLoader />
-      </div>
+      <Dashboard>
+                <CircleLoader color="#fff"/>
+      </Dashboard>
     );
   }
 

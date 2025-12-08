@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { useValidateCaptchaMutation } from '../../api/userApi'
-import { useCreateSubscriptionMutation } from '../../api/paymentsApi'
+import { useCreateSubscriptionMutation, useCancelSubscriptionMutation } from '../../api/paymentsApi'
 import { useMobile } from '../../utils/hooks/hooks'
 
 
@@ -15,6 +15,7 @@ const theme = useSelector((state: RootState) => state.theme);
 const captchaRef = useRef<HCaptcha>(null);
 const [validateCaptcha, {isLoading: validatingCaptcha}] = useValidateCaptchaMutation()
 const [createSubscription, {isLoading: creatingSubscription}] = useCreateSubscriptionMutation()
+const [cancelSubscription, {isLoading: cancellingSubscription}] = useCancelSubscriptionMutation()
 const [captchaToken, setCaptchaToken] = useState<string | null>(null)
 const [selectedPlan, setSelectedPlan] = useState<PaymentData>({
     userId: user.id,
@@ -47,68 +48,192 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
         }))
     }
   
+    // const handlePayment = async () => {
+    //     if (!captchaToken) {
+    //         alert('Por favor completa el captcha');
+    //         return;
+    //     }
+
+    //     try {
+    //         // Validar captcha en el backend
+    //         const captchaResponse = await validateCaptcha({token: captchaToken});
+            
+    //         console.log(captchaResponse)
+
+    //         if (captchaResponse.data?.message?.includes("Captcha ok") === false) {
+    //             alert('Captcha inválido');
+    //             captchaRef.current?.resetCaptcha();
+    //             setCaptchaToken(null);
+    //             return;
+    //         }
+
+    //         if(user.plan !== 'free' && selectedPlan.plan === 'free') {
+    //             if(confirm('¿Está seguro que quiere cancelar su subscripción?')){
+    //                 const cancellingResponse = cancelSubscription({
+    //                 userId: user.id,
+    //                 subscriptionId: user.subscriptionId
+    //             })
+                
+    //             const result = await cancellingResponse
+
+    //             if(result?.data?.success) {
+    //                 alert(`Subscripción cancelada`)
+    //                 captchaRef.current?.resetCaptcha();
+    //                 setCaptchaToken(null);
+    //             } else {
+    //                 alert(`Error al cancelar subscripción. Contactese con ${import.meta.env.VITE_REACH_EMAIL}`);
+    //             // Reset captcha en caso de error
+    //                 captchaRef.current?.resetCaptcha();
+    //                 setCaptchaToken(null);
+    //             }
+    //             } else return
+
+    //         } else {
+    //             const paymentResponse = createSubscription({
+    //              userId: selectedPlan.userId || '1',
+    //              email: selectedPlan.email || 'motioncrushapp@gmail.com',
+    //              amount: selectedPlan.amount,
+    //              plan: selectedPlan.plan,
+       
+    //         })
+
+    //         const result = await paymentResponse;
+     
+    //         if (result.data?.checkoutUrl && result.data?.checkoutUrl.includes("https://www.mercadopago.com.ar/")) {
+    //             // Redirigir a MercadoPago
+    //             window.location.href = result.data?.checkoutUrl;
+    //         } else {
+    //             alert('Error al procesar el pago');
+    //             // Reset captcha en caso de error
+    //             captchaRef.current?.resetCaptcha();
+    //             setCaptchaToken(null);
+    //         }
+    //         }
+
+            
+
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //         alert('Error al procesar el pago');
+    //         captchaRef.current?.resetCaptcha();
+    //         setCaptchaToken(null);
+    //     }
+    // }
+
     const handlePayment = async () => {
-        if (!captchaToken) {
-            alert('Por favor completa el captcha');
-            return;
+    // 1. Centralized CAPTCHA reset logic
+    const resetCaptchaState = () => {
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
+    };
+
+    // --- Helper Functions ---
+
+    // Handles the subscription cancellation logic
+    const handleCancellation = async () => {
+        if (!confirm('¿Está seguro que quiere cancelar su subscripción?')) {
+            return false; // Exit if the user cancels the confirmation
         }
 
         try {
-            // Validar captcha en el backend
-            const captchaResponse = await validateCaptcha({token: captchaToken});
-            
-            console.log(captchaResponse)
+            const cancellingResponse = cancelSubscription({
+                userId: user.id,
+                subscriptionId: user.subscriptionId
+            });
 
-            if (captchaResponse.data?.message?.includes("Captcha ok") === false) {
-                alert('Captcha inválido');
-                captchaRef.current?.resetCaptcha();
-                setCaptchaToken(null);
-                return;
+            const result = await cancellingResponse;
+
+            if (result?.data?.success) {
+                alert(`Subscripción cancelada`);
+                return true;
+            } else {
+                alert(`Error al cancelar subscripción. Contactese con ${import.meta.env.VITE_REACH_EMAIL}`);
+                return false;
             }
+        } catch (error) {
+            console.error('Error al cancelar subscripción:', error);
+            alert(`Error al cancelar subscripción. Contactese con ${import.meta.env.VITE_REACH_EMAIL}`);
+            return false;
+        }
+    };
 
-            // Enviar pago con el token del captcha
-            // const paymentResponse = await fetch('http://localhost:3000/payment', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //         email: selectedPlan.email,
-            //         amount: selectedPlan.amount,
-            //         planName: selectedPlan.plan,
-            //         captchaToken: captchaToken // Incluir el token
-            //     })
-            // });
-
-
-
+    // Handles the new subscription/payment logic
+    const handleNewSubscription = async () => {
+        try {
             const paymentResponse = createSubscription({
-                 userId: selectedPlan.userId || '1',
-                 email: selectedPlan.email || 'motioncrushapp@gmail.com',
-                 amount: selectedPlan.amount,
+                userId: selectedPlan.userId || user.id, // Use actual user ID if available
+                email: selectedPlan.email || user.email, // Use actual user email if available
+                amount: selectedPlan.amount,
                 plan: selectedPlan.plan,
-       
-            })
+            });
 
             const result = await paymentResponse;
-            console.log(result)
+
             if (result.data?.checkoutUrl && result.data?.checkoutUrl.includes("https://www.mercadopago.com.ar/")) {
                 // Redirigir a MercadoPago
-                window.location.href = result.data?.checkoutUrl;
+                window.location.href = result.data.checkoutUrl;
+                return true;
             } else {
-                alert('Error al procesar el pago');
-                // Reset captcha en caso de error
-                captchaRef.current?.resetCaptcha();
-                setCaptchaToken(null);
+                alert('Error al procesar el pago. Inténtalo de nuevo.');
+                return false;
             }
-
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error al procesar el pago');
-            captchaRef.current?.resetCaptcha();
-            setCaptchaToken(null);
+            console.error('Error al crear subscripción:', error);
+            alert('Error al procesar el pago. Por favor, inténtalo más tarde.');
+            return false;
         }
+    };
+    
+    // --- Main Logic ---
+
+    // 2. Initial CAPTCHA check
+    if (!captchaToken) {
+        alert('Por favor completa el captcha');
+        return;
     }
+
+    try {
+        // 3. CAPTCHA Validation
+        const captchaResponse = await validateCaptcha({ token: captchaToken });
+        
+        console.log(captchaResponse);
+
+        // Check for specific success message (use more robust check if possible)
+        const isCaptchaValid = captchaResponse.data?.message?.includes("Captcha ok");
+
+        if (!isCaptchaValid) {
+            alert('Captcha inválido');
+            resetCaptchaState();
+            return;
+        }
+
+        // 4. Handle Subscription Logic
+        let success = false;
+        
+        // Scenario 1: Downgrade to 'free' (Cancellation)
+        if (user.plan !== 'free' && selectedPlan.plan === 'free') {
+            success = await handleCancellation();
+        // Scenario 2: New/Upgrade Subscription (Payment)
+        } else if (selectedPlan.plan !== 'free') { 
+            success = await handleNewSubscription();
+        } 
+        // Note: If user.plan is 'free' and selectedPlan.plan is 'free', no action is taken.
+
+        // 5. Final CAPTCHA Reset on success or specific failure cases
+        if (success) {
+            resetCaptchaState();
+        } else if (!success) {
+            // Reset CAPTCHA on failure for user to try again
+            resetCaptchaState(); 
+        }
+
+    } catch (error) {
+        // 6. General Error Handling
+        console.error('Error inesperado durante el proceso:', error);
+        alert('Error inesperado al procesar la solicitud.');
+        resetCaptchaState();
+    }
+};
 
 
 

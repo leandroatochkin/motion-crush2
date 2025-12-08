@@ -16,6 +16,10 @@ export interface VerifyPaymentData {
     collectionStatus: 'approved' | 'pending' | 'rejected'
 }
 
+export interface CancelSubscriptionData {
+    userId: string
+    subscriptionId: string
+}
 
 export const paymentApiSlice = createApi({
     reducerPath: "paymentApiSlice",
@@ -51,7 +55,7 @@ export const paymentApiSlice = createApi({
           body: payload,
         }),
       }),
-      cancelSubscription: builder.mutation<any, VerifyPaymentData>({
+      cancelSubscription: builder.mutation<any, CancelSubscriptionData>({
         query: (payload) => ({
           url: `/cancel-subscription`,
           method: "POST",
@@ -70,5 +74,6 @@ export const paymentApiSlice = createApi({
   
   export const {
         useCreateSubscriptionMutation,
-        useVerifyPaymentMutation
+        useVerifyPaymentMutation,
+        useCancelSubscriptionMutation
   } = paymentApiSlice
