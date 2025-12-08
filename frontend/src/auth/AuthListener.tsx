@@ -29,6 +29,7 @@ export default function AppAuth() {
           const res = (checkResult as any)?.data ?? checkResult;
           const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
           const plan = res?.plan ?? 'free';
+          const subscriptionId = res?.subscriptionId ?? null
       
           
           dispatch(storeLogin({
@@ -38,7 +39,8 @@ export default function AppAuth() {
             role: res?.role || 'user',
             isLoggedIn: true,
             usage,
-            plan
+            plan,
+            subscriptionId
           }));
           setToken(session.access_token);
           
@@ -65,6 +67,7 @@ export default function AppAuth() {
             const res = (checkResult as any)?.data ?? checkResult;
             const usage = res?.usage ?? { used: 0, limit: 10, remaining: 10 };
             const plan = res?.plan ?? 'free';
+             const subscriptionId = res?.subscriptionId ?? null
             
             dispatch(storeLogin({
               id: session.user.id,
@@ -73,7 +76,8 @@ export default function AppAuth() {
               role: res?.role || 'user',
               isLoggedIn: true,
               usage,
-              plan
+              plan,
+              subscriptionId
             }));
             setToken(session.access_token);
             navigate("/draw", { replace: true });

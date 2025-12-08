@@ -113,6 +113,8 @@ const onSubmit = async (data: UserLoginData) => {
     const res = (checkResult as any)?.data ?? checkResult;
     const usage = res?.usage ?? 0;
     const plan = res?.plan ?? null;
+    const subscriptionId = res?.subscriptionId ?? null
+
 
     dispatch(
       storeLogin({
@@ -123,6 +125,7 @@ const onSubmit = async (data: UserLoginData) => {
         role: "user",
         usage: usage,
         plan: plan,
+        subscriptionId: subscriptionId
       })
     );
 

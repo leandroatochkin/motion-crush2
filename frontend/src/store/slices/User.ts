@@ -15,10 +15,12 @@ export interface UserState {
     role: 'user' | 'admin';
     usage: Usage | null,
     plan: 'free' | 'premium' | 'pro' | null
+    subscriptionId: string | null
 }
 
 interface UpdatePlan {
     plan: 'free' | 'premium' | 'pro' | null
+    subscriptionId: string | null
 }
 
 
@@ -29,14 +31,15 @@ const initialState: UserState = {
     isLoggedIn: false,
     role: 'user',
     usage: null,
-    plan: 'free'
+    plan: 'free',
+    subscriptionId: null
 }
 
 export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'; isLoggedIn: boolean, usage: Usage, plan: 'free' | 'premium' | 'pro'}>) => {
+        storeLogin: (state, action: PayloadAction<{id: string; name: string; email: string; role: 'user' | 'admin'; isLoggedIn: boolean, usage: Usage, plan: 'free' | 'premium' | 'pro', subscriptionId: string | null}>) => {
             state.id = action.payload.id;
             state.name = action.payload.name;
             state.email = action.payload.email;
@@ -44,6 +47,7 @@ export const userSlice = createSlice({
             state.role = action.payload.role;
             state.usage = action.payload.usage;
             state.plan = action.payload.plan;
+            state.subscriptionId = action.payload.subscriptionId
         },
         updateUsage: (state, action: PayloadAction<Usage>) => {
             if (state.usage) {
@@ -54,7 +58,8 @@ export const userSlice = createSlice({
         },
         updatePlan: (state, action: PayloadAction<UpdatePlan>) => {
             if (state.plan) {
-                state.plan = action.payload.plan
+                state.plan = action.payload.plan;
+                state.subscriptionId = action.payload.subscriptionId;
             }
         },
         logout: (state) => {
@@ -64,7 +69,8 @@ export const userSlice = createSlice({
             state.isLoggedIn = false;
             state.role = 'user';
             state.usage = null;
-            state.plan = null
+            state.plan = null;
+            state.subscriptionId = null
 
             localStorage.removeItem("sb-cbbvploublqutmbiwwaq-auth-token");
         } 

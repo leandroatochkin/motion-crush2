@@ -42,7 +42,8 @@ const PaymentSuccess = () => {
           setStatus('success');
           // Actualizar el estado del usuario localmente
           dispatch(updatePlan({
-            plan: response.data?.plan
+            plan: response.data?.plan,
+            subscriptionId: paymentId
           }))
           // dispatch(updateUserPlan(data.plan));
           

@@ -33,6 +33,8 @@ const handleCaptchaVerify = (token: string) => {
 
 const captchaSiteKey = import.meta.env.VITE_CAPTCHA_SITEKEY
 
+const isCurrentPlan = (name: string) => user.plan === name;
+
 const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') => {
         // Reset captcha cuando cambian de plan
         setCaptchaToken(null);
@@ -141,6 +143,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                 '&:hover': {
                     scale: 1.05
                   },
+                border: isCurrentPlan('free') ? '3px solid green' : 'none',
             }}
             onClick={()=>handlePlanSelection(0, 'free')}
             >
@@ -177,6 +180,9 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                     $0
                 </Typography>
                 </Box>
+                {isCurrentPlan('free') && (
+                                <Chip label="Plan actual" color="success" sx={{ position: 'absolute', bottom: 10, left: 10 }} />
+                            )}
             </Paper>
             <Paper
             elevation={6}
@@ -187,6 +193,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                 scale: selectedPlan.plan === 'premium' ? 1.05 : 1,
                 color: selectedPlan.plan === 'premium' ? '#fff' : theme.colors.text,
                 background: selectedPlan.plan === 'premium' ? 'rgba(131, 58, 180, 1)' : '#fff',
+                border: isCurrentPlan('premium') ? '3px solid green' : 'none',
                 '&:hover': {
                     scale: 1.05,
                     background: 'rgba(131, 58, 180, 1)',
@@ -240,6 +247,9 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                     AR$5999/mes
                 </Typography>
                 </Box>
+                {isCurrentPlan('premium') && (
+                                <Chip label="Plan actual" color="success" sx={{ position: 'absolute', bottom: 10, left: 10 }} />
+                            )}
             </Paper>
             <Paper
             elevation={6}
@@ -249,6 +259,7 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                 transition: '0.2s scale ease-in',
                 scale: selectedPlan.plan === 'pro' ? 1.05 : 1,
                 color: selectedPlan.plan === 'pro' ? '#fff' : theme.colors.text,
+                border: isCurrentPlan('pro') ? '3px solid green' : 'none',
                 background: selectedPlan.plan === 'pro' ? 'linear-gradient(90deg,rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)' : '#fff',
                 '&:hover': {
                     scale: 1.05,
@@ -324,6 +335,9 @@ const handlePlanSelection = (amount: number, plan: 'free' | 'premium' | 'pro') =
                     AR$9999/mes
                 </Typography>
                 </Box>
+                {isCurrentPlan('pro') && (
+                                <Chip label="Plan actual" color="success" sx={{ position: 'absolute', bottom: 10, left: 10 }} />
+                            )}
             </Paper>
         </Box>
         {

@@ -18,11 +18,11 @@ export const router = createBrowserRouter([
       {
         path: '/draw',
         element: (
-          <ProtectedRoute>
+          
             <Dashboard>
               <Main />
             </Dashboard>
-          </ProtectedRoute>
+         
         ),
       },
       {

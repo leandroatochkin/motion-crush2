@@ -17,6 +17,8 @@ import { useCreateSketchMutation } from "../../api/sketchApi";
 import { useDispatch } from "react-redux";
 import { updateUsage } from "../../store/slices/User";
 import { useMobile } from "../../utils/hooks/hooks";
+import UpgradeArrow from "../../assets/icons/UpgradeArrow";
+import { useNavigate } from "react-router-dom";
 
 
 const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
@@ -32,6 +34,9 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
   const [createSketch] = useCreateSketchMutation()
 
   const isMobile = useMobile()
+  const navigate = useNavigate()
+  
+  const handleUpgradePlan = () => navigate('/plans')
 
 const handleMakeSketch = async () => {
   const res = await createSketch({ userId: user.id }).unwrap();
@@ -167,6 +172,18 @@ const handleMakeSketch = async () => {
             alignItems: 'center'
           }}
           >
+            {
+              user.plan === 'free' || user.plan === 'premium' &&
+              <Tooltip
+              title='mejorar plan'
+              >
+                <Button
+                onClick={handleUpgradePlan}
+                >
+                  <UpgradeArrow />
+                </Button>
+              </Tooltip>
+            }
             <img src="/logo.png" alt="motion-crush logo" 
             style={{
                 height: '80px'

@@ -11,6 +11,8 @@ export interface UserLoginData {
 export interface UserResponse {
    ok: boolean
    usage: Usage
+   plan: string
+   subscriptionId: string
 }
 
 interface UserId {

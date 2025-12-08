@@ -17,3 +17,4 @@ export {default as Isometric} from './Isometric';
 export {default as TopView} from './TopView';
 export {default as GridIcon} from './Grid';
 export {default as OffIcon} from './OffIcon';
+export {default as UpgradeArrow} from './UpgradeArrow';
