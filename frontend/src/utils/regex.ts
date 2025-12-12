@@ -17,3 +17,17 @@
  export const cuitRegex = /^\d{11}$/
 
  export const idRegex = /^\d{1,11}$/
+
+ export const spamRegex = new RegExp(
+  [
+    "(https?:\\/\\/|www\\.)",                           // URLs
+    "([a-zA-Z0-9])\\1{4,}",                             // Character spam
+    "(buy now|free money|casino|xxx|sex|crypto|investment|followers|telegram)", // Phrases
+    "[^\\w\\s.,!¡?¿:\\/\\-]{6,}",                       // Symbol spam
+    "[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u206F]",  // Zero-width & bidi control
+    "[\\u0400-\\u04FF]{3,}",                            // Cyrillic spam bursts
+    "[\\u2100-\\u214F]",                                // Letterlike symbols
+    "[\\u2200-\\u22FF]"                                 // Math symbols
+  ].join("|"),
+  "i"
+);

@@ -159,7 +159,6 @@ const onSubmit = async (data: UserLoginData) => {
             id='login'
             aria-label="Formulario de inicio de sesión"
             sx={{
-                borderRadius: 4,
                 width: {
                     md: '30%',
                     xs: '86vw'
@@ -176,7 +175,7 @@ const onSubmit = async (data: UserLoginData) => {
           backgroundPosition: 'center',
           height: '100px',
           width: '100%',
-          borderRadius: 4,
+          borderRadius: 1,
           mb: 2
         }}
         >

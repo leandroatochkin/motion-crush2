@@ -19,6 +19,7 @@ export interface VerifyPaymentData {
 export interface CancelSubscriptionData {
     userId: string
     subscriptionId: string
+    exitReason?: string
 }
 
 export const paymentApiSlice = createApi({

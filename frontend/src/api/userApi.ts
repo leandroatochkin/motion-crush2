@@ -23,6 +23,12 @@ interface Captcha {
   token: string
 }
 
+export interface DeleteAccountData {
+     userId: string
+     type?: 'exit.suggestion'
+     exitReason?: string
+}
+
 export const userApiSlice = createApi({
     reducerPath: "userApiSlice",
     baseQuery: fetchBaseQuery({
@@ -57,6 +63,14 @@ export const userApiSlice = createApi({
           body: payload,
         }),
       }),
+      deleteAccount: builder.mutation<any, DeleteAccountData>({
+        query: (payload) => ({
+          url: `/delete-account`,
+          method: "POST",
+          body: payload,
+        }),
+      }),
+
     //   checkUserUsage: builder.query<string, string>({
     //     query: (userId) => ({
     //         url: `/usage/check-usage?userId=${userId}`,
@@ -68,6 +82,7 @@ export const userApiSlice = createApi({
   
   export const {
         useCheckLoginMutation,
-        useValidateCaptchaMutation
+        useValidateCaptchaMutation,
+        useDeleteAccountMutation
         //useLazyCheckUserUsageQuery
   } = userApiSlice

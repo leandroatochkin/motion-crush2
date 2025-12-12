@@ -150,7 +150,6 @@ const ResetPassword = () => {
                 <Paper
                     aria-label="Formulario de nueva contraseña"
                     sx={{
-                        borderRadius: 4,
                         width: {
                             md: '30%',
                             xs: '86vw'
@@ -303,7 +302,6 @@ const ResetPassword = () => {
             <Paper
                 aria-label="Formulario de solicitud de recuperación"
                 sx={{
-                    borderRadius: 4,
                     width: {
                         md: '30%',
                         xs: '86vw'
