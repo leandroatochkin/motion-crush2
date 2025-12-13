@@ -64,7 +64,7 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
       case 'cancel':
         setOpenDialogs(prev => ({ ...prev, plans: true }));
         break;
-      case 'plans':
+      case 'plan':
         navigate('/plans');
         break;
       case 'account':
@@ -186,7 +186,7 @@ const handleMakeSketch = async () => {
         }}
       >
         <MenuItem onClick={()=>handleMenu('cancel')}>Cancelar plan</MenuItem>
-        <MenuItem onClick={()=>handleMenu('plan')}>Mejorar lan</MenuItem>
+        <MenuItem onClick={()=>handleMenu('plan')}>Mejorar plan</MenuItem>
         <MenuItem onClick={()=>handleMenu('account')}>Eliminar cuenta</MenuItem>
         <MenuItem onClick={()=>handleMenu('logout')}>Salir</MenuItem>
       </Menu>
