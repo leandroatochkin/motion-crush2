@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "./supabase";
-import { setToken } from "./token";
+import { setToken, getToken } from "./token";
 import { useDispatch, useSelector } from "react-redux";
 import { storeLogin, logout } from "../store/slices/User";
 import { useCheckLoginMutation } from "../api/userApi";
@@ -51,43 +51,48 @@ export default function AppAuth() {
   };
 
   const handleSessionData = async (session: any) => {
-    try {
-      setError(null);
-      setRetryCount(0);
+  try {
+    setError(null);
+    setRetryCount(0);
 
-      const res = await attemptCheckLogin(session.user.id, session.user.email);
-      
-      const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
-      const plan = res?.plan ?? 'free';
-      const subscriptionId = res?.subscriptionId ?? null;
+    // ✅ IMPORTANTE: Guardar el token PRIMERO
+    setToken(session.access_token);
+    
+    // ✅ Verificar que el token se guardó correctamente
+    const savedToken = getToken();
+    console.log('🔑 Token saved:', savedToken ? '✅ Yes' : '❌ No');
 
-      dispatch(storeLogin({
-        id: session.user.id,
-        name: session.user.user_metadata?.name || session.user.user_metadata?.full_name || '',
-        email: session.user.email || '',
-        role: res?.role || 'user',
-        isLoggedIn: true,
-        usage,
-        plan,
-        subscriptionId
-      }));
-      
-      setToken(session.access_token);
+    // Ahora checkLogin tendrá el token disponible
+    const res = await attemptCheckLogin(session.user.id, session.user.email);
+    
+    const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
+    const plan = res?.plan ?? 'free';
+    const subscriptionId = res?.subscriptionId ?? null;
 
-      // Only navigate if on login page
-      if (location.pathname === '/') {
-        navigate("/draw", { replace: true });
-      }
+    dispatch(storeLogin({
+      id: session.user.id,
+      name: session.user.user_metadata?.name || session.user.user_metadata?.full_name || '',
+      email: session.user.email || '',
+      role: res?.role || 'user',
+      isLoggedIn: true,
+      usage,
+      plan,
+      subscriptionId
+    }));
 
-      return true;
-    } catch (error: any) {
-      console.error("❌ Error handling session:", error);
-      setError(error.message || 'Error al verificar la sesión');
-      return false;
-    } finally {
-      setIsLoading(false);
+    if (location.pathname === '/') {
+      navigate("/draw", { replace: true });
     }
-  };
+
+    return true;
+  } catch (error: any) {
+    console.error("❌ Error handling session:", error);
+    setError(error.message || 'Error al verificar la sesión');
+    return false;
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     // Check for existing session on mount
