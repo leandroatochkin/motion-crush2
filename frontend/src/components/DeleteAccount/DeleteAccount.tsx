@@ -4,11 +4,17 @@ import ReusableDialog from "../Templates/DialogWithTextarea";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { logout } from "../../store/slices/User";
 
 export default function DeleteAccountModal({ open, onClose }) {
-  const [deleteAccount, result] = useDeleteAccountMutation();
+  const [deleteAccount, {isSuccess, isError}] = useDeleteAccountMutation();
   const user = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch()
+
+
 
   const handleSubmit = (data) => {
     deleteAccount({
@@ -19,14 +25,14 @@ export default function DeleteAccountModal({ open, onClose }) {
 
   // 🔥 Auto redirect after success
   React.useEffect(() => {
-    if (result.isSuccess) {
+    if (isSuccess) {
       setTimeout(() => {
         localStorage.clear();
         sessionStorage.clear();
-        navigate("/");
-      }, 2500);
+        dispatch(logout())
+      }, 1000);
     }
-  }, [result.isSuccess]);
+  }, [isSuccess]);
 
   return (
     <ReusableDialog
@@ -36,8 +42,8 @@ export default function DeleteAccountModal({ open, onClose }) {
       description="Esta acción es permanente. Se eliminarán tu perfil, tus datos y tu historial."
       confirmLabel="Eliminar cuenta"
       onSubmit={handleSubmit}
-      success={result.isSuccess}
-      error={result.isError}
+      success={isSuccess}
+      error={isError}
       successMessage="Tu cuenta fue eliminada. Gracias por habernos elegido."
       errorMessage={`Error al eliminar tu cuenta. Escribinos a ${import.meta.env.VITE_REACH_EMAIL}`}
     />

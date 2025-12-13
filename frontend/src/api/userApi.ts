@@ -16,7 +16,8 @@ export interface UserResponse {
 }
 
 interface UserId {
-    userId: string
+    userId: string,
+    userEmail: string
 }
 
 interface Captcha {
@@ -25,7 +26,6 @@ interface Captcha {
 
 export interface DeleteAccountData {
      userId: string
-     type?: 'exit.suggestion'
      exitReason?: string
 }
 

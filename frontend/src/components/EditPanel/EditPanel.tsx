@@ -251,7 +251,7 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
           </Button>
           </Tooltip>
         ))}
-        <Box
+        {/* <Box
         sx={styles.logoutButtonContainer}
         >
           <Button
@@ -265,7 +265,7 @@ const EditPanel = ({  handleRemoveAsset, selectedAsset, setSelectedAssets, handl
            }
           </Button>
          
-        </Box>
+        </Box> */}
     </Box>
   );
 };

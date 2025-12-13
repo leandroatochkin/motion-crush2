@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { toJpeg } from "html-to-image";
 import { Download, ClearPanel, Eraser } from "../../assets/icons";
 import style from "./Canvas.module.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from '../../store/store'
 import { 
   Box, 
@@ -11,17 +11,26 @@ import {
   Tooltip, 
   Typography,
   Chip,
+  Menu,
+  MenuItem
  } from "@mui/material";
 import { notify } from "../../lib/notifications/notify";
 import { useCreateSketchMutation } from "../../api/sketchApi";
-import { useDispatch } from "react-redux";
 import { updateUsage } from "../../store/slices/User";
 import { useMobile } from "../../utils/hooks/hooks";
 import UpgradeArrow from "../../assets/icons/UpgradeArrow";
 import { useNavigate } from "react-router-dom";
+import { logout } from '../../store/slices/User';
+import CancelSubscriptionModal from "../CancelSubscription/CancelSubscription";
+import DeleteAccountModal from "../DeleteAccount/DeleteAccount";
 
 
 const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
+  const [openDialogs, setOpenDialogs] = React.useState({
+    plans: false,
+    deleteAccount: false
+  })
+
   const canvasRef = useRef(null);
   const watermarkRef = useRef(null);
   const dispatch = useDispatch()
@@ -29,12 +38,46 @@ const Canvas = ({ children, handleClearPanel, handleClearCanva, grid }) => {
   const theme = useSelector((state: RootState) => state.theme);
   const user = useSelector((state: RootState) => state.user);
   const remaining = useSelector((state: RootState) => state.user?.usage?.remaining) || 0;
-
-
   const [createSketch] = useCreateSketchMutation()
 
   const isMobile = useMobile()
   const navigate = useNavigate()
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleLogout = () => {
+        dispatch(logout())
+        navigate('/')
+      }
+
+  const handleClose = () => {
+       setAnchorEl(null);
+  }
+
+  const handleMenu = (menu: string) => {
+    setAnchorEl(null);
+    switch(menu){
+      case 'cancel':
+        setOpenDialogs(prev => ({ ...prev, plans: true }));
+        break;
+      case 'plans':
+        navigate('/plans');
+        break;
+      case 'account':
+        setOpenDialogs(prev => ({ ...prev, deleteAccount: true }));
+        break;
+      case 'logout':
+        handleLogout()
+        break;
+    }
+  };
+
+
+  
   
   const handleUpgradePlan = () => navigate('/plans')
 
@@ -111,7 +154,50 @@ const handleMakeSketch = async () => {
         linear-gradient(90deg, transparent 24%, ${bgSec} 25%, ${bgSec} 26%, transparent 27%,transparent 74%, ${bgSec} 75%, ${bgSec} 76%, transparent 77%,transparent)
         `
 
+  const OptionsMenu = () => {
+    return (
+      <>
+      <Button
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        menu
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        slotProps={{
+          list: {
+            'aria-labelledby': 'basic-button',
+          },
+        }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <MenuItem onClick={()=>handleMenu('cancel')}>Cancelar plan</MenuItem>
+        <MenuItem onClick={()=>handleMenu('plan')}>Mejorar lan</MenuItem>
+        <MenuItem onClick={()=>handleMenu('account')}>Eliminar cuenta</MenuItem>
+        <MenuItem onClick={()=>handleMenu('logout')}>Salir</MenuItem>
+      </Menu>
+      </>
+    )
+  }      
+
   return (
+    <>
+    {openDialogs.plans && <CancelSubscriptionModal open={openDialogs.plans} onClose={()=>setOpenDialogs(prev => ({ ...prev, plans: false }))} />}
+    {openDialogs.deleteAccount && <DeleteAccountModal open={openDialogs.deleteAccount} onClose={()=>setOpenDialogs(prev => ({ ...prev, deleteAccount: false }))} />}
     <Box 
       sx={{
           width: '100%',
@@ -137,6 +223,7 @@ const handleMakeSketch = async () => {
         
       >
           <Box>
+            <OptionsMenu />
             {topButtons.map((btn, i) => (
             <Tooltip
               key={i}
@@ -154,7 +241,7 @@ const handleMakeSketch = async () => {
           </Box>
 
           {
-            !isMobile ? 
+            (!isMobile || user.plan !== 'pro') ? 
             <Chip
           color={remaining < 4 ? 'error' : 'success'}
           label={`Te quedan ${remaining} esquemas en la capa gratuita`}
@@ -184,6 +271,7 @@ const handleMakeSketch = async () => {
                 </Button>
               </Tooltip>
             }
+            
             <img src="/logo.png" alt="motion-crush logo" 
             style={{
                 height: '80px'
@@ -226,6 +314,7 @@ const handleMakeSketch = async () => {
         </div>
       </Paper>
     </Box>
+    </>
   );
 };
 

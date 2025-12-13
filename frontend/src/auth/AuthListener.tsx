@@ -26,7 +26,7 @@ export default function AppAuth() {
       if (session) {
         try {
           // Fetch usage data
-          const checkResult = await checkLogin({ userId: session.user.id });
+          const checkResult = await checkLogin({ userId: session.user.id, userEmail: session.user.email });
           const res = (checkResult as any)?.data ?? checkResult;
           const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
           const plan = res?.plan ?? 'free';
@@ -64,7 +64,7 @@ export default function AppAuth() {
         
         if (event === "SIGNED_IN" && session) {
           try {
-            const checkResult = await checkLogin({ userId: session.user.id });
+            const checkResult = await checkLogin({ userId: session.user.id, userEmail: session.user.email });
             const res = (checkResult as any)?.data ?? checkResult;
             const usage = res?.usage ?? { used: 0, limit: 10, remaining: 10 };
             const plan = res?.plan ?? 'free';

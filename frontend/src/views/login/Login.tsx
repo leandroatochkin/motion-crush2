@@ -101,6 +101,7 @@ const onSubmit = async (data: UserLoginData) => {
     }
 
     const userId = authData.user?.id;
+    const userEmail = authData.user?.email;
     const accessToken = authData.session?.access_token;
 
     if (accessToken) {
@@ -109,7 +110,7 @@ const onSubmit = async (data: UserLoginData) => {
       console.warn("No access token returned from Supabase");
     }
 
-    const checkResult = await checkLogin({ userId });
+    const checkResult = await checkLogin({ userId, userEmail });
     const res = (checkResult as any)?.data ?? checkResult;
     const usage = res?.usage ?? 0;
     const plan = res?.plan ?? null;
