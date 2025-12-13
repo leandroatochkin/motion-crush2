@@ -343,26 +343,25 @@ const allAssets = Object.values(fullCategories)
               </Button>
 
               <Tooltip
-              title={user.plan === 'free' ? 'No disponible en este plan' : 'Añadir texto'}
+              title={(user.plan !== 'premium' && user.plan !== 'pro') ? 'No disponible en este plan' : 'Añadir texto'}
               >
                <span>
                  <Button
                 onClick={() => setTextAssets(prev => [...prev, {}])}
                   sx={styles.button}
-                  disabled={user.plan === 'free'}
+                  disabled={(user.plan !== 'premium' && user.plan !== 'pro')}
                   >
                 ➕ Texto
               </Button>
                </span>
               </Tooltip>
               <Tooltip
-              title={user.plan === 'free' ? 'No disponible en este plan' : 'Añadir imagen'}
-              
+              title={(user.plan !== 'premium' && user.plan !== 'pro') ? 'No disponible en este plan' : 'Añadir imagen'}
               >
                 <span>
                   <Button
                 onClick={() => setOpenEditor(true)}
-                disabled={user.plan === 'free'}
+                disabled={(user.plan !== 'premium' && user.plan !== 'pro')}
                   sx={styles.button}>
                 ➕ Imagen
               </Button>
