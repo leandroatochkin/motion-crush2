@@ -244,7 +244,7 @@ const handleMakeSketch = async () => {
             (!isMobile || user.plan !== 'pro') ? 
             <Chip
           color={remaining < 4 ? 'error' : 'success'}
-          label={`Te quedan ${remaining} esquemas en la capa gratuita`}
+          label={`Te quedan ${remaining} esquemas`}
           />
           :
           null
