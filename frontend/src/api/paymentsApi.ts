@@ -12,8 +12,8 @@ export interface PaymentData {
 
 export interface VerifyPaymentData {
     userId: string
-    subscriptionId: string
-    collectionStatus: 'approved' | 'pending' | 'rejected'
+    preapprovalId: string
+    collectionStatus?: 'approved' | 'pending' | 'rejected'
 }
 
 export interface CancelSubscriptionData {
