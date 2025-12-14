@@ -74,9 +74,9 @@ const handleSessionData = async (session: any) => {
       subscriptionId
     }));
 
-    // ✅ SOLO navegar si estamos en la página de login
-    // NO navegar si estamos en payment-success
-    if (location.pathname !== '/payment-success') {
+    // ✅ SOLO navegar si estamos en la página de login (/)
+    // NO navegar en otras páginas como /payment-success, /planes, /draw, etc.
+    if (location.pathname === '/') {
       navigate("/draw", { replace: true });
     }
 
@@ -98,13 +98,6 @@ useEffect(() => {
   // Check for existing session on mount
   supabase.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
-      // ✅ NO navegar si estamos en payment-success
-      if (location.pathname === '/payment-success') {
-        console.log('⏸️ Skipping navigation - on payment-success page');
-        setIsLoading(false);
-        return;
-      }
-
       await handleSessionData(session);
     } else {
       setIsLoading(false);
@@ -117,19 +110,8 @@ useEffect(() => {
       console.log('🔔 Auth event:', event, 'Path:', location.pathname);
 
       if (event === "SIGNED_IN" && session) {
-        // ✅ NO navegar si estamos en payment-success
-        if (location.pathname === '/payment-success') {
-          console.log('⏸️ Skipping navigation after sign in - on payment-success page');
-          return;
-        }
-
         setIsLoading(true);
-        const success = await handleSessionData(session);
-        
-        // Solo navegar si NO estamos en payment-success
-        if (success && location.pathname !== '/payment-success') {
-          navigate("/draw", { replace: true });
-        }
+        await handleSessionData(session);
       } 
       else if (event === "SIGNED_OUT") {
         dispatch(logout());
