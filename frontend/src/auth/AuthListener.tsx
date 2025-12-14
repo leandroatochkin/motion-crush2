@@ -50,19 +50,13 @@ export default function AppAuth() {
     }
   };
 
-  const handleSessionData = async (session: any) => {
+const handleSessionData = async (session: any) => {
   try {
     setError(null);
     setRetryCount(0);
 
-    // ✅ IMPORTANTE: Guardar el token PRIMERO
     setToken(session.access_token);
     
-    // ✅ Verificar que el token se guardó correctamente
-    const savedToken = getToken();
-    console.log('🔑 Token saved:', savedToken ? '✅ Yes' : '❌ No');
-
-    // Ahora checkLogin tendrá el token disponible
     const res = await attemptCheckLogin(session.user.id, session.user.email);
     
     const usage = res?.usage ?? { used: 0, limit: 100, remaining: 100 };
@@ -80,7 +74,9 @@ export default function AppAuth() {
       subscriptionId
     }));
 
-    if (location.pathname === '/') {
+    // ✅ SOLO navegar si estamos en la página de login
+    // NO navegar si estamos en payment-success
+    if (location.pathname !== '/payment-success') {
       navigate("/draw", { replace: true });
     }
 
@@ -94,41 +90,61 @@ export default function AppAuth() {
   }
 };
 
-  useEffect(() => {
-    // Check for existing session on mount
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        await handleSessionData(session);
-      } else {
+  // AppAuth.tsx - en el useEffect principal
+useEffect(() => {
+  console.log('🔍 Current path:', location.pathname);
+  console.log('🔍 Search params:', location.search);
+
+  // Check for existing session on mount
+  supabase.auth.getSession().then(async ({ data: { session } }) => {
+    if (session) {
+      // ✅ NO navegar si estamos en payment-success
+      if (location.pathname === '/payment-success') {
+        console.log('⏸️ Skipping navigation - on payment-success page');
         setIsLoading(false);
+        return;
       }
-    });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN" && session) {
-          setIsLoading(true);
-          const success = await handleSessionData(session);
-          
-          if (success) {
-            navigate("/draw", { replace: true });
-          }
-        } 
-        else if (event === "SIGNED_OUT") {
-          dispatch(logout());
-          navigate("/", { replace: true });
+      await handleSessionData(session);
+    } else {
+      setIsLoading(false);
+    }
+  });
+
+  // Listen for auth changes
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    async (event, session) => {
+      console.log('🔔 Auth event:', event, 'Path:', location.pathname);
+
+      if (event === "SIGNED_IN" && session) {
+        // ✅ NO navegar si estamos en payment-success
+        if (location.pathname === '/payment-success') {
+          console.log('⏸️ Skipping navigation after sign in - on payment-success page');
+          return;
         }
-        else if (event === "TOKEN_REFRESHED" && session) {
-          setToken(session.access_token);
+
+        setIsLoading(true);
+        const success = await handleSessionData(session);
+        
+        // Solo navegar si NO estamos en payment-success
+        if (success && location.pathname !== '/payment-success') {
+          navigate("/draw", { replace: true });
         }
+      } 
+      else if (event === "SIGNED_OUT") {
+        dispatch(logout());
+        navigate("/", { replace: true });
       }
-    );
+      else if (event === "TOKEN_REFRESHED" && session) {
+        setToken(session.access_token);
+      }
+    }
+  );
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [dispatch, navigate, location.pathname]);
+  return () => {
+    subscription.unsubscribe();
+  };
+}, [dispatch, navigate, location.pathname]);
 
   const handleRetry = () => {
     setIsLoading(true);
